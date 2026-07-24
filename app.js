@@ -1,0 +1,156 @@
+(function () {
+  "use strict";
+  const D = window.SAEROM_DATA || {};
+  const $ = (s, root) => (root || document).querySelector(s);
+  const $$ = (s, root) => Array.from((root || document).querySelectorAll(s));
+  const KEYS = { large:"saeromSettings_largeText", contrast:"saeromSettings_highContrast", lang:"saeromSettings_language" };
+  const state = {
+    floor: new URLSearchParams(location.search).get("floor") || "all",
+    selected: null, query: "", role: localStorage.getItem("saeromQuest_userType") || "신입생",
+    completed: readArray("saeromQuest_completedPlaces"), step: Number(localStorage.getItem("saeromQuest_currentStep")) || 0,
+    badges: readArray("saeromQuest_badges"), answered: false, lang: "ko"
+  };
+
+  const I18N = {
+    ko:{skip:"본문 바로가기",navHome:"홈",navMap:"지도",navRoute:"길안내",navQuest:"탐방",largeText:"가+ 큰 글씨",contrast:"◐ 고대비",guide:"새롬고등학교 디지털 길잡이",heroTitle:"교실을 찾고, 학교를 탐험해요.",heroDesc:"장소 검색부터 층별 지도, 텍스트 길안내와 캠퍼스 탐방까지 한곳에서.",searchLabel:"장소 검색",searchPlaceholder:"보건실, 도서실, 2학년 교무실을 검색해 보세요.",searchButton:"찾기 →",quick:"빠른 메뉴",floorMap:"층별 지도",floorMapDesc:"1층부터 5층까지",routeMenu:"길안내",routeMenuDesc:"출발지를 직접 선택",questMenu:"맞춤 탐방",questMenuDesc:"역할별 미션과 퀴즈",frequent:"자주 찾는 장소",floorPlan:"층별 평면도",mapError:"평면도 이미지를 확인해 주세요.",mapHint:"글자를 가리지 않는 투명 영역을 눌러 장소 정보를 확인하세요.",detailEmpty:"층을 선택하고 지도 속 교실을 눌러 주세요.",routeTitle:"출발지를 직접 선택하세요",start:"출발 위치",destination:"목적지",makeRoute:"안내 만들기",safety:"⚠ 비상상황에서는 화면 안내보다 학교 교직원의 안내를 우선해 주세요.",questTitle:"역할별 새롬길 탐방",reset:"탐방 진행 초기화",iAm:"나는"},
+    en:{skip:"Skip to content",navHome:"Home",navMap:"Map",navRoute:"Directions",navQuest:"Quest",largeText:"A+ Large text",contrast:"◐ Contrast",guide:"Saerom High School Digital Guide",heroTitle:"Find your classroom. Explore the campus.",heroDesc:"Search places, view floor maps, get text directions, and complete campus quests.",searchLabel:"Search places",searchPlaceholder:"Search Health Room, Library, or Grade 2 Office.",searchButton:"Search →",quick:"Quick menu",floorMap:"Floor maps",floorMapDesc:"Floors 1 through 5",routeMenu:"Directions",routeMenuDesc:"Choose your starting point",questMenu:"Personal quest",questMenuDesc:"Missions for each visitor type",frequent:"Frequently visited",floorPlan:"Floor maps",mapError:"Please check the floor map image.",mapHint:"Select a transparent room area without covering the printed labels.",detailEmpty:"Select a floor and choose a room on the map.",routeTitle:"Choose your starting point",start:"Start",destination:"Destination",makeRoute:"Create directions",safety:"⚠ In an emergency, follow school staff instructions before this screen.",questTitle:"Campus quests by visitor type",reset:"Reset quest",iAm:"I am"}
+  };
+  I18N.ko.makeRoute="완료";
+  I18N.en.makeRoute="Done";
+  I18N.ko.routePlaceholder="이 곳에 길 안내 글이 표시됩니다.";
+  I18N.en.routePlaceholder="Directions will appear here.";
+  const ROLE_EN = {"신입생":"New student","전입생":"Transfer student","학부모":"Parent/guardian","교류학생":"Exchange student","방문객":"Visitor"};
+  const FLOOR_EN = {"전체 배치도":"All floors","1층":"1st floor","2층":"2nd floor","3층":"3rd floor","4층":"4th floor","5층":"5th floor"};
+  const ROUTE_EN = {gate:"Main gate",lobby:"Main entrance","food-start":"Food education hall","stairs-1":"Central stairs · Floor 1","stairs-2":"Central stairs · Floor 2","stairs-3":"Central stairs · Floor 3","stairs-4":"Central stairs · Floor 4","stairs-5":"Central stairs · Floor 5"};
+  const PLACE_EN = {"health-112":"Health room","library-116":"Library","food-209":"Food education hall","computer-212":"Computer room","admin-104":"Administration office","grade1-319":"Grade 1 teachers' office","grade2-421":"Grade 2 teachers' office","grade3-521":"Grade 3 teachers' office","career-310":"Career counseling office","av-120":"Audio-visual room","hall-312":"Multipurpose hall","art-216":"Art room 2","wee-114":"Wee Class counseling room"};
+  const BADGE_KO = {"신입생":"새롬 새싹 배지","전입생":"새로운 시작 배지","학부모":"든든한 동행 배지","교류학생":"글로벌 프렌드 배지","방문객":"새롬 탐험가 배지"};
+  const BADGE_EN = {"신입생":"Saerom Sprout Badge","전입생":"Fresh Start Badge","학부모":"Supportive Companion Badge","교류학생":"Global Friend Badge","방문객":"Saerom Explorer Badge"};
+
+  function readArray(key){try{const v=JSON.parse(localStorage.getItem(key));return Array.isArray(v)?v:[];}catch(_){return[];}}
+  function text(ko,en){return state.lang==="en"?en:ko;}
+  function el(tag, props, children){if(props&&props.className==="badge"&&state.lang==="en")props=Object.assign({},props,{text:"◆ "+(ROLE_EN[state.role]||state.role)+" quest badge"});const n=document.createElement(tag);Object.keys(props||{}).forEach(k=>k==="className"?n.className=props[k]:k==="text"?n.textContent=props[k]:k==="disabled"?n.disabled=props[k]:n.setAttribute(k,props[k]));(children||[]).forEach(c=>n.append(c));return n;}
+  function norm(v){return String(v||"").trim().toLocaleLowerCase("ko").replace(/\s+/g,"");}
+  function placeById(id){return (D.places||[]).find(p=>p.id===id)||null;}
+  function placeName(p){return state.lang==="en"?(PLACE_EN[p.id]||`Room ${p.room}`):p.name;}
+  function placeDescription(p){return state.lang==="en"?"Check the room location and follow school staff guidance when using this facility.":p.description;}
+  function course(){return (D.questProfiles&&D.questProfiles[state.role])||D.quests[0].placeIds;}
+  function saveQuest(){localStorage.setItem("saeromQuest_userType",state.role);localStorage.setItem("saeromQuest_completedPlaces",JSON.stringify(state.completed));localStorage.setItem("saeromQuest_currentStep",String(state.step));localStorage.setItem("saeromQuest_badges",JSON.stringify(state.badges));}
+  function validateData(){const warnings=[];const ids=new Set(D.places.map(p=>p.id));D.places.forEach(p=>{if(!D.floors.some(f=>f.number===p.floor))warnings.push(`${p.id}: floor`);if(![p.mapX,p.mapY].every(v=>Number.isFinite(v)&&v>=0&&v<=100))warnings.push(`${p.id}: coordinates`);});D.departments.forEach(d=>{if(!ids.has(d.basePlaceId))warnings.push(`${d.id}: place reference`);});if(warnings.length)console.warn("Saerom data warnings",warnings);return warnings;}
+
+  function applyLanguage(){document.documentElement.lang=state.lang;D.places.forEach(p=>{if(!p.koName)p.koName=p.name;p.name=state.lang==="en"?(PLACE_EN[p.id]||`Room ${p.room}`):p.koName;});$$('[data-i18n]').forEach(n=>{const k=n.dataset.i18n;if(I18N[state.lang][k])n.textContent=I18N[state.lang][k];});$$('[data-i18n-placeholder]').forEach(n=>{const k=n.dataset.i18nPlaceholder;n.placeholder=I18N[state.lang][k]||n.placeholder;});$("#language").textContent=state.lang==="ko"?"EN English":"한글 Korean";$("#language").setAttribute("aria-pressed",String(state.lang==="en"));$$('#userType option').forEach(o=>{o.textContent=state.lang==="en"?ROLE_EN[o.value]:o.value;});renderFrequent();renderSearch(state.query);renderMap();initRoutes();makeRoute();renderQuest();}
+  function showView(id,hash=true){const safe=$("#"+id)?id:"home";$$('.view').forEach(v=>v.classList.toggle("active",v.id===safe));$$('[data-view]').forEach(b=>b.setAttribute("aria-current",String(b.dataset.view===safe)));if(hash)location.hash=safe;window.scrollTo(0,0);}
+
+  function renderFrequent(){const box=$("#frequent");box.replaceChildren();["health-112","library-116","food-209","admin-104","wee-114"].forEach(id=>{const p=placeById(id);if(!p)return;const b=el("button",{text:placeName(p)});b.onclick=()=>goMap(id);box.append(b);});}
+  function search(q){const n=norm(q);if(!n)return[];const out=[];D.places.filter(p=>p.active&&p.searchable&&[p.name,p.room,p.category,p.description].some(x=>norm(x).includes(n))).forEach(data=>out.push({type:"장소",data}));D.departments.filter(d=>[d.name,d.duties].some(x=>norm(x).includes(n))).forEach(data=>out.push({type:"부서",data}));return out;}
+  function renderSearch(q){state.query=String(q||"");$("#query").value=state.query;const box=$("#results"),meta=$("#searchMeta");box.replaceChildren();if(!state.query.trim()){meta.textContent="";return;}const results=search(state.query);meta.textContent=results.length?text(`“${state.query.trim()}” 검색 결과 ${results.length}개`,`${results.length} result(s) for “${state.query.trim()}”`):text("검색 결과가 없습니다. 정확한 장소명이나 호실을 입력해 보세요.","No results. Try an official place name or room number.");results.forEach(r=>{const d=r.data,card=el("article",{className:"card"});card.append(el("span",{className:"tag",text:r.type==="장소"?text("장소","Place"):text("부서","Department")}),el("h2",{text:d.name}));const p=r.type==="장소"?d:placeById(d.basePlaceId);if(r.type==="장소")card.append(el("p",{text:text(`${d.floor}층 · ${d.room}호 · ${d.category}`,`Floor ${d.floor} · Room ${d.room} · ${d.category}`)}),el("p",{text:d.description}));else card.append(el("p",{text:d.duties}),el("p",{text:p?text(`기본 위치: ${p.room}호 ${p.name}`,`Base: Room ${p.room}, ${p.name}`):text("기본 위치 확인 필요","Location needs review")}));const row=el("div",{className:"card-actions"}),map=el("button",{text:text("지도에서 보기","View on map")}),route=el("button",{className:"secondary",text:text("이동 안내","Directions")});map.onclick=()=>goMap(p&&p.id);route.onclick=()=>{if(p)$("#routeEnd").value=p.id;showView("route");};row.append(map,route);card.append(row);box.append(card);});}
+
+  function renderFloorTabs(){const box=$("#floorTabs");box.replaceChildren();D.floors.forEach(f=>{const label=f.number?text(`${f.number}층`,`Floor ${f.number}`):text("전체","All");const b=el("button",{role:"tab",text:label,"aria-selected":String(state.floor===f.id)});b.onclick=()=>{state.floor=f.id;state.selected=null;renderMap();};box.append(b);});}
+  function goMap(id){const p=placeById(id);if(!p){showView("map");return;}state.floor=String(p.floor);state.selected=id;renderMap();showView("map");setTimeout(()=>$("#placeDetail").scrollIntoView({behavior:"smooth",block:"start"}),80);}
+  function renderMap(){const f=D.floors.find(x=>x.id===state.floor)||D.floors[0],img=$("#mapImage"),frame=$("#mapFrame"),marks=$("#markers");frame.dataset.floor=f.id;$("#floorTitle").textContent=state.lang==="en"?(FLOOR_EN[f.name]||f.name):f.name;img.alt=text(`새롬고등학교 ${f.name} 평면도`,`Saerom High School ${FLOOR_EN[f.name]||f.name} map`);img.src=f.image;$("#mapError").hidden=true;marks.replaceChildren();renderFloorTabs();if(f.number){D.places.filter(p=>p.active&&p.floor===f.number&&Number.isFinite(p.mapX)&&Number.isFinite(p.mapY)).forEach(p=>{const b=el("button",{className:"hotspot"+(state.selected===p.id?" selected":""),"aria-label":text(`${p.room}호 ${p.name}`,`Room ${p.room}, ${p.name}`),title:text(`${p.room}호 ${p.name}`,`Room ${p.room}, ${p.name}`)});b.style.left=p.mapX+"%";b.style.top=p.mapY+"%";b.onclick=()=>{state.selected=p.id;renderMap();setTimeout(()=>$("#placeDetail").scrollIntoView({behavior:"smooth",block:"start"}),50);};marks.append(b);});}renderDetail(placeById(state.selected));}
+  function renderDetail(p){const box=$("#placeDetail");box.replaceChildren();if(!p){box.append(el("p",{className:"empty",text:I18N[state.lang].detailEmpty}));return;}box.append(el("span",{className:"tag",text:text(p.category,"School facility")}),el("h2",{text:placeName(p)}),el("p",{text:text(`${p.floor}층 · ${p.room}호`,`Floor ${p.floor} · Room ${p.room}`)}),el("p",{text:placeDescription(p)}),el("h3",{text:text("이용 안내","Use guide")}),el("p",{text:text(p.usageInfo,"Use this room only during school operating hours and follow staff instructions.")}));const ul=el("ul");if(state.lang==="en")ul.append(el("li",{text:"Ask a teacher or staff member if you need help."}));else p.rules.forEach(x=>ul.append(el("li",{text:x})));box.append(ul);const row=el("div",{className:"card-actions"}),r=el("button",{text:text("이동 안내","Directions")}),q=el("button",{className:"secondary",text:text("탐방 미션","Place mission")}),c=el("button",{className:"secondary",text:text("닫기","Close")});r.onclick=()=>{$("#routeEnd").value=p.id;showView("route")};q.onclick=()=>{showView("quest");renderStandaloneMission(p);};c.onclick=()=>{state.selected=null;renderMap();};row.append(r,q,c);box.append(row);}
+
+  function initRoutes(){const a=$("#routeStart"),b=$("#routeEnd"),sv=a.value,bv=b.value;a.replaceChildren();b.replaceChildren();D.routes.forEach(r=>a.append(el("option",{value:r.id,text:state.lang==="en"?(ROUTE_EN[r.id]||r.name):r.name})));D.places.forEach(p=>b.append(el("option",{value:p.id,text:text(`${p.floor}층 ${p.room}호 ${p.name}`,`Floor ${p.floor} · Room ${p.room} · ${placeName(p)}`)})));if(sv)a.value=sv;if(bv)b.value=bv;}
+  function makeRoute(){const s=D.routes.find(x=>x.id===$("#routeStart").value),p=placeById($("#routeEnd").value),box=$("#routeResult");if(!s||!p){box.textContent=text("출발지와 목적지를 선택해 주세요.","Choose a start and destination.");return;}if(state.lang==="en"){const startName=ROUTE_EN[s.id]||s.name,destination=placeName(p);box.textContent=s.floor===p.floor?`Start at ${startName}. Follow the corridor on Floor ${p.floor} and look for Room ${p.room}, ${destination}.`:`Start at ${startName}. Use the central stairs to go ${s.floor<p.floor?"up":"down"} to Floor ${p.floor}, then look for Room ${p.room}, ${destination}.`;return;}const parts=[`${s.name}에서 출발합니다.`];parts.push(s.floor===p.floor?`${p.floor}층 복도를 따라 이동합니다.`:`중앙 계단을 이용해 ${s.floor<p.floor?"올라가":"내려가"} ${p.floor}층으로 이동합니다.`);parts.push(`${p.room}호 ${p.name}을 확인하세요.`,p.routeHint);box.textContent=parts.join(" ");}
+
+  function roleMission(role,p){const name=p?placeName(p):text("중앙 계단","Central stairs");if(state.lang==="en"){const room=p?`Room ${p.room}, `:"";const english={"신입생":{task:`Find ${room}${name} and review its basic rules.`,q:`What should a new student do when using ${name}?`,a:["Follow school guidance and staff instructions.","Enter without permission by following a friend.","Move school equipment without permission."]},"전입생":{task:`Learn where ${room}${name} is and how to ask for help while settling into your new school.`,q:`What should a transfer student do if they do not know how to use ${name}?`,a:["Ask a teacher or staff member for the official procedure.","Use another student's account without checking.","Ignore access rules."]},"학부모":{task:`Review the visitor procedure and student privacy rules for ${room}${name}.`,q:`What should a parent or guardian do when visiting ${name}?`,a:["Follow visitor guidance and protect student privacy.","Photograph student areas without permission.","Enter a classroom during a lesson without notice."]},"교류학생":{task:`Review the shared-use rules for ${room}${name} and how to respect other students.`,q:`What should an exchange student do when using ${name}?`,a:["Follow shared rules and respect other students.","Ignore every unfamiliar rule.","Use another person's belongings without permission."]},"방문객":{task:`Check the visitor route and entry procedure for ${room}${name}.`,q:`What should a visitor do when looking for ${name}?`,a:["Follow school directions and ask staff when needed.","Ignore restricted-entry signs.","Photograph students without permission."]}};return english[role]||english["신입생"];}const room=p?`${p.room}호 `:"";const common={
+    "신입생":{task:`${room}${name}의 위치와 기본 이용 규칙을 확인하세요.`,q:`신입생이 ${name}을 이용할 때 가장 알맞은 행동은?`,a:["학교 안내와 담당 교직원의 설명을 따른다.","친구를 따라 허락 없이 들어간다.","시설물을 임의로 옮긴다."]},
+    "전입생":{task:`새 학교에 적응할 수 있도록 ${room}${name}의 위치와 도움을 요청하는 방법을 알아보세요.`,q:`전입생이 ${name} 이용 방법을 모를 때 가장 알맞은 행동은?`,a:["담임 또는 담당 교직원에게 공식 이용 방법을 묻는다.","확인하지 않고 다른 학생의 계정을 사용한다.","출입 규칙을 무시한다."]},
+    "학부모":{task:`학부모 방문 시 ${room}${name}의 공식 방문 절차와 학생 개인정보 보호 원칙을 확인하세요.`,q:`학부모가 ${name}을 방문할 때 가장 알맞은 행동은?`,a:["학교의 방문 안내를 따르고 학생 개인정보를 보호한다.","학생 공간을 허락 없이 촬영한다.","수업 중 교실에 바로 들어간다."]},
+    "교류학생":{task:`교류학생으로서 ${room}${name}의 공동 이용 규칙과 서로 존중하는 방법을 확인하세요.`,q:`교류학생이 ${name}을 이용할 때 가장 알맞은 행동은?`,a:["공동 규칙을 확인하고 다른 학생을 존중한다.","모르는 규칙은 무조건 무시한다.","다른 사람의 물건을 허락 없이 사용한다."]},
+    "방문객":{task:`방문객으로서 ${room}${name}까지의 안내 동선과 출입 절차를 확인하세요.`,q:`방문객이 ${name}을 찾을 때 가장 알맞은 행동은?`,a:["학교 안내에 따라 이동하고 필요한 경우 교직원에게 문의한다.","출입 제한 표시를 무시한다.","학생을 허락 없이 촬영한다."]}
+  };return common[role]||common["신입생"];}
+
+  function roleMissionByPlace(role,p){
+    const name=p?placeName(p):text("중앙 계단","Central stairs");
+    const rawName=p?(p.koName||p.name):"중앙 계단";
+    const id=p?p.id:"stairs-center";
+    let kind="classroom";
+    if(/health|보건/.test(id+rawName))kind="health";
+    else if(/library|도서/.test(id+rawName))kind="library";
+    else if(/food|식생활/.test(id+rawName))kind="food";
+    else if(/computer|전산|컴퓨터/.test(id+rawName))kind="computer";
+    else if(/career|진로|상담|wee/i.test(id+rawName))kind="counsel";
+    else if(/art|미술|음악|실험|과학/.test(id+rawName))kind="practice";
+    else if(/hall|강당|시청각/.test(id+rawName))kind="event";
+    else if(/admin|교무|행정|교장|부서/.test(id+rawName+(p?p.category:"")))kind="office";
+    else if(/stairs|계단/.test(id+rawName))kind="stairs";
+    const scenarios={
+      health:{ko:["몸이 아프면 선생님께 알리고 보건실 이용 절차를 따른다.","친구의 약을 허락 없이 먹는다.","아픈 사실을 숨긴 채 혼자 버틴다."],en:["Tell a teacher and follow the health-room procedure when you feel sick.","Take a friend's medicine without permission.","Hide your symptoms and deal with them alone."]},
+      library:{ko:["책을 조용히 이용하고 대출·반납 규칙을 지킨다.","빌리지 않은 책을 학교 밖으로 가져간다.","책에 낙서하고 아무 곳에나 둔다."],en:["Use books quietly and follow borrowing and return rules.","Take an unborrowed book outside the school.","Write in books and leave them anywhere."]},
+      food:{ko:["손을 씻고 배식 순서와 식사 예절을 지킨다.","급식 줄을 새치기한다.","음식을 복도에 가져가 흘린 채 둔다."],en:["Wash your hands and follow the serving line and dining rules.","Cut into the meal line.","Carry food into the corridor and leave spills behind."]},
+      computer:{ko:["자신의 계정만 사용하고 사용 후 반드시 로그아웃한다.","다른 학생의 비밀번호를 알아내 사용한다.","허가 없이 프로그램을 설치한다."],en:["Use only your own account and sign out when finished.","Use another student's password.","Install software without permission."]},
+      counsel:{ko:["상담 내용과 다른 사람의 개인정보를 존중하며 정해진 방법으로 도움을 요청한다.","다른 학생의 상담 내용을 퍼뜨린다.","예약된 상담을 장난으로 방해한다."],en:["Respect privacy and ask for help through the proper counseling process.","Share another student's private counseling information.","Interrupt a scheduled counseling session as a joke."]},
+      practice:{ko:["도구와 장비는 설명을 들은 뒤 안전수칙에 따라 사용한다.","실험·실습 도구를 허락 없이 작동한다.","사용한 재료를 바닥에 그대로 둔다."],en:["Use tools and equipment only after instructions and follow safety rules.","Operate practice equipment without permission.","Leave used materials on the floor."]},
+      event:{ko:["행사 안내에 따라 지정된 자리와 이동 통로를 지킨다.","비상 통로를 가방으로 막는다.","무대 장비를 허락 없이 만진다."],en:["Follow event guidance and keep assigned seats and aisles clear.","Block an emergency aisle with a bag.","Touch stage equipment without permission."]},
+      office:{ko:["노크한 뒤 용건을 말하고 담당 교직원의 안내를 기다린다.","업무 중인 서류를 임의로 가져간다.","허락 없이 교직원 자리에 앉는다."],en:["Knock, explain why you are there, and wait for staff guidance.","Take office documents without permission.","Sit at a staff desk without permission."]},
+      stairs:{ko:["오른쪽으로 천천히 이동하고 난간 주변에서 장난치지 않는다.","계단에서 친구를 밀며 뛰어간다.","계단에 가방을 내려놓고 통로를 막는다."],en:["Walk carefully on the right and do not play near the railing.","Run and push others on the stairs.","Leave a bag on the stairs and block the way."]},
+      classroom:{ko:["수업과 사용 시간을 확인하고 교실의 공동 규칙을 지킨다.","수업 중 허락 없이 큰 소리로 들어간다.","교실 물품을 다른 곳으로 가져간다."],en:["Check the schedule and follow the shared classroom rules.","Enter loudly during a lesson without permission.","Take classroom items to another place."]}
+    };
+    const roleTaskKo={"신입생":"새 학교생활에 필요한 이용 방법을 익혀 보세요.","전입생":"이전 학교와 다른 이용 규칙을 확인해 보세요.","학부모":"학생의 안전과 개인정보를 지키는 방문 방법을 확인해 보세요.","교류학생":"서로의 문화를 존중하며 공동 규칙을 익혀 보세요.","방문객":"학교의 출입 절차와 안내 동선을 확인해 보세요."};
+    const roleTaskEn={"신입생":"Learn how to use this place during your new school life.","전입생":"Check rules that may differ from your previous school.","학부모":"Review how to visit while protecting student safety and privacy.","교류학생":"Learn shared rules while respecting different cultures.","방문객":"Review the visitor route and entry procedure."};
+    const answers=(state.lang==="en"?scenarios[kind].en:scenarios[kind].ko).slice();
+    const seed=Array.from(role+id).reduce((sum,ch)=>sum+ch.charCodeAt(0),0);
+    const shift=seed%answers.length;
+    const arranged=answers.slice(shift).concat(answers.slice(0,shift));
+    return {task:text(`${p?`${p.room}호 `:""}${rawName}: ${roleTaskKo[role]}`,`${p?`Room ${p.room}, `:""}${name}: ${roleTaskEn[role]}`),q:text(`${rawName}에서 가장 알맞은 행동은 무엇일까요?`,`What is the best action at ${name}?`),a:arranged,correctIndex:(answers.length-shift)%answers.length};
+  }
+
+  roleMission=roleMissionByPlace;
+  function toast(success,message,duration){const t=$("#toast");t.className="toast "+(success?"success":"fail");t.textContent=(success?"★ ":"× ")+message;t.hidden=false;clearTimeout(toast.timer);toast.timer=setTimeout(()=>{t.hidden=true;},duration||(success?800:2200));}
+  function renderQuiz(card,mission,onCorrect){const q=el("h3",{text:mission.q}),options=el("div",{className:"quiz-options"}),feedback=el("p",{className:"quiz-feedback","aria-live":"polite"});mission.a.forEach((answer,index)=>{const b=el("button",{text:answer});b.onclick=()=>{if(index===(mission.correctIndex??0)){$$('button',options).forEach(x=>x.disabled=true);b.classList.add("correct");feedback.textContent=text("정답입니다! 잠시 후 다음 미션으로 이동합니다.","Correct! Moving to the next mission shortly.");toast(true,text("정답입니다","Correct"));onCorrect();}else{b.classList.add("wrong");feedback.textContent=text("실패! 다시 선택해 보세요. 진행도에는 추가되지 않습니다.","Not correct. Try again; progress was not added.");toast(false,text("실패 — 다시 도전하세요","Try again"));}};options.append(b);});card.append(q,options,feedback);}
+  function renderQuest(){const ids=course();state.step=Math.min(state.step,ids.length);const completedInCourse=ids.filter(id=>state.completed.includes(id)).length,pct=Math.round(completedInCourse/ids.length*100);$("#progressBar").style.width=pct+"%";$("#progressText").textContent=text(`진행률 ${completedInCourse}/${ids.length} · ${pct}%`,`Progress ${completedInCourse}/${ids.length} · ${pct}%`);const badges=$("#badges");badges.replaceChildren();state.badges.forEach(x=>badges.append(el("span",{className:"badge",text:"◆ "+x})));const card=$("#questCard");card.replaceChildren();if(state.step>=ids.length){card.append(el("p",{className:"eyebrow",text:text("탐방 완료","Quest complete")}),el("h2",{text:text(`${state.role} 맞춤 탐방을 완료했어요!`,`${ROLE_EN[state.role]} quest completed!`)}),el("p",{text:text("모든 미션의 정답을 확인했습니다.","You completed every mission correctly.")}));return;}const id=ids[state.step],p=placeById(id),name=p?p.name:text("중앙 계단","Central stairs"),mission=roleMission(state.role,p);state.answered=false;card.append(el("p",{className:"eyebrow",text:text(`${state.role} 미션 ${state.step+1}/${ids.length}`,`${ROLE_EN[state.role]} mission ${state.step+1}/${ids.length}`)}),el("h2",{text:name}),el("p",{className:"mission-task",text:mission.task}));if(p){const map=el("button",{className:"ghost",text:text("지도에서 보기","View on map")});map.onclick=()=>goMap(p.id);card.append(map);}renderQuiz(card,mission,()=>{if(state.answered)return;state.answered=true;if(!state.completed.includes(id))state.completed.push(id);state.step++;const badge=`${state.role} 탐방 배지`;if(!state.badges.includes(badge))state.badges.push(badge);saveQuest();toast(true,text("미션 완료! 다음 장소로 이동합니다.","Mission complete! Moving to the next place."));setTimeout(()=>{if(state.answered)renderQuest();},900);});}
+  function renderStandaloneMission(p){const card=$("#questCard"),mission=roleMission(state.role,p);card.replaceChildren(el("p",{className:"eyebrow",text:text("장소별 탐방 미션","Place mission")}),el("h2",{text:`${p.room} ${placeName(p)}`}),el("p",{className:"mission-task",text:mission.task}));renderQuiz(card,mission,()=>{});const back=el("button",{className:"ghost",text:text("내 탐방 코스로 돌아가기","Back to my quest")});back.onclick=renderQuest;card.append(back);}
+
+  function renderQuestUpdated(){
+    const ids=course();
+    state.step=Math.min(state.step,ids.length);
+    state.badges=state.badges.filter(role=>ROLE_EN[role]);
+    const completedInCourse=ids.filter(id=>state.completed.includes(id)).length;
+    const pct=Math.round(completedInCourse/ids.length*100);
+    $("#progressBar").style.width=pct+"%";
+    $("#progressText").textContent=text(`진행률 ${completedInCourse}/${ids.length} · ${pct}%`,`Progress ${completedInCourse}/${ids.length} · ${pct}%`);
+    const badges=$("#badges");
+    badges.replaceChildren();
+    state.badges.forEach(role=>badges.append(el("span",{className:"badge earned-badge",text:"◆ "+text(BADGE_KO[role],BADGE_EN[role])})));
+    const card=$("#questCard");
+    card.replaceChildren();
+    if(state.step>=ids.length){
+      card.append(el("p",{className:"eyebrow",text:text("탐방 완료","Quest complete")}),el("h2",{text:text(`${state.role} 맞춤 탐방을 완료했어요!`,`${ROLE_EN[state.role]} quest completed!`)}),el("p",{text:text(`${BADGE_KO[state.role]}를 획득했습니다.`,`You earned the ${BADGE_EN[state.role]}!`)}));
+      return;
+    }
+    const id=ids[state.step],p=placeById(id),name=p?placeName(p):text("중앙 계단","Central stairs"),mission=roleMission(state.role,p);
+    state.answered=false;
+    card.append(el("p",{className:"eyebrow",text:text(`${state.role} 미션 ${state.step+1}/${ids.length}`,`${ROLE_EN[state.role]} mission ${state.step+1}/${ids.length}`)}),el("h2",{text:name}),el("p",{className:"mission-task",text:mission.task}));
+    if(p){const map=el("button",{className:"ghost",text:text("지도에서 보기","View on map")});map.onclick=()=>goMap(p.id);card.append(map);}
+    renderQuiz(card,mission,()=>{
+      if(state.answered)return;
+      state.answered=true;
+      if(!state.completed.includes(id))state.completed.push(id);
+      state.step++;
+      const finished=state.step>=ids.length;
+      if(finished&&!state.badges.includes(state.role))state.badges.push(state.role);
+      saveQuest();
+      if(finished)toast(true,text(`${BADGE_KO[state.role]}를 얻었습니다!`,`You earned the ${BADGE_EN[state.role]}!`),2400);
+      else toast(true,text("미션 완료! 다음 장소로 이동합니다.","Mission complete! Moving to the next place."));
+      setTimeout(()=>{if(state.answered)renderQuest();},900);
+    });
+  }
+
+  renderQuest=renderQuestUpdated;
+  function changeRole(role){state.role=role;state.completed=[];state.badges=[];state.step=0;state.answered=false;saveQuest();renderQuest();}
+  function applySetting(key,cls,button){const on=localStorage.getItem(key)==="true";document.body.classList.toggle(cls,on);button.setAttribute("aria-pressed",String(on));}
+
+  function init(){validateData();$("#userType").value=state.role;renderFrequent();renderSearch("");renderMap();initRoutes();makeRoute();renderQuest();applySetting(KEYS.large,"large-text",$("#largeText"));applySetting(KEYS.contrast,"high-contrast",$("#contrast"));applyLanguage();$$('[data-view]').forEach(b=>b.addEventListener("click",()=>showView(b.dataset.view)));$("#searchForm").addEventListener("submit",e=>{e.preventDefault();renderSearch(new FormData(e.currentTarget).get("q")||"");});$("#routeGo").onclick=makeRoute;$("#userType").onchange=e=>changeRole(e.target.value);$("#resetQuest").onclick=()=>{Object.keys(localStorage).filter(k=>k.startsWith("saeromQuest_")).forEach(k=>localStorage.removeItem(k));state.completed=[];state.badges=[];state.step=0;state.answered=false;saveQuest();renderQuest();};$("#largeText").onclick=()=>{localStorage.setItem(KEYS.large,String(!document.body.classList.contains("large-text")));applySetting(KEYS.large,"large-text",$("#largeText"));};$("#contrast").onclick=()=>{localStorage.setItem(KEYS.contrast,String(!document.body.classList.contains("high-contrast")));applySetting(KEYS.contrast,"high-contrast",$("#contrast"));};$("#language").onclick=()=>{state.lang=state.lang==="ko"?"en":"ko";localStorage.setItem(KEYS.lang,state.lang);applyLanguage();};$("#mapImage").onerror=()=>{$("#mapError").hidden=false};$("#mapImage").onload=()=>{$("#mapError").hidden=true};window.addEventListener("hashchange",()=>showView(location.hash.slice(1)||"home",false));showView(location.hash.slice(1)||"home",false);}
+  function setupRouteCompletion(){
+    const button=$("#routeGo"),result=$("#routeResult"),start=$("#routeStart"),end=$("#routeEnd"),language=$("#language");
+    const reset=()=>{button.hidden=false;button.dataset.completed="false";result.textContent=I18N[state.lang].routePlaceholder;};
+    button.onclick=()=>{makeRoute();button.hidden=true;button.dataset.completed="true";};
+    start.addEventListener("change",reset);
+    end.addEventListener("change",reset);
+    language.addEventListener("click",()=>{if(button.dataset.completed!=="true")result.textContent=I18N[state.lang].routePlaceholder;});
+    reset();
+  }
+
+  init();
+  setupRouteCompletion();
+}());

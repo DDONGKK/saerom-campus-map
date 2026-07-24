@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#073b75">
+  <title>새롬길 — Campus Map & Quest</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip" href="#main" data-i18n="skip">본문 바로가기</a>
+  <header>
+    <button class="brand" data-view="home" aria-label="새롬길 홈">
+      <img src="assets/brand/saeromgil-logo.png" alt="새롬길 Campus Map 로고">
+    </button>
+    <nav aria-label="주요 메뉴">
+      <button data-view="home" data-i18n="navHome">홈</button>
+      <button data-view="map" data-i18n="navMap">지도</button>
+      <button data-view="route" data-i18n="navRoute">길안내</button>
+      <button data-view="quest" data-i18n="navQuest">탐방</button>
+    </nav>
+    <div class="settings">
+      <button id="language" aria-pressed="false">EN English</button>
+      <button id="largeText" aria-pressed="false" data-i18n="largeText">가+ 큰 글씨</button>
+      <button id="contrast" aria-pressed="false" data-i18n="contrast">◐ 고대비</button>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <section id="home" class="view active">
+      <div class="hero">
+        <p class="eyebrow" data-i18n="guide">새롬고등학교 디지털 길잡이</p>
+        <h1 data-i18n="heroTitle">교실을 찾고, 학교를 탐험해요.</h1>
+        <p data-i18n="heroDesc">장소 검색부터 층별 지도, 텍스트 길안내와 캠퍼스 탐방까지 한곳에서.</p>
+        <form class="hero-search" id="searchForm">
+          <label class="sr-only" for="query" data-i18n="searchLabel">장소 검색</label>
+          <input id="query" name="q" data-i18n-placeholder="searchPlaceholder" placeholder="보건실, 도서실, 2학년 교무실을 검색해 보세요.">
+          <button data-i18n="searchButton">찾기 →</button>
+        </form>
+      </div>
+      <div id="searchMeta" class="notice" aria-live="polite"></div>
+      <div id="results" class="results"></div>
+      <h2 data-i18n="quick">빠른 메뉴</h2>
+      <div class="quick">
+        <button data-view="map">▦<b data-i18n="floorMap">층별 지도</b><span data-i18n="floorMapDesc">1층부터 5층까지</span></button>
+        <button data-view="route">➜<b data-i18n="routeMenu">길안내</b><span data-i18n="routeMenuDesc">출발지를 직접 선택</span></button>
+        <button data-view="quest">⚑<b data-i18n="questMenu">맞춤 탐방</b><span data-i18n="questMenuDesc">역할별 미션과 퀴즈</span></button>
+      </div>
+      <h2 data-i18n="frequent">자주 찾는 장소</h2>
+      <div id="frequent" class="chips"></div>
+    </section>
+
+    <section id="map" class="view">
+      <div class="section-head"><div><p class="eyebrow">Campus Map</p><h1 data-i18n="floorPlan">층별 평면도</h1></div><span id="floorTitle" class="floor-badge">전체 배치도</span></div>
+      <div id="floorTabs" class="tabs" role="tablist" aria-label="층 선택"></div>
+      <div class="map-layout">
+        <div class="map-column">
+          <div id="mapFrame" class="map-frame">
+            <img id="mapImage" alt="새롬고등학교 전체 배치도">
+            <div id="markers"></div>
+            <p id="mapError" hidden data-i18n="mapError">평면도 이미지를 확인해 주세요.</p>
+          </div>
+          <p class="caption" data-i18n="mapHint">글자를 가리지 않는 투명 영역을 눌러 장소 정보를 확인하세요.</p>
+        </div>
+        <aside id="placeDetail" class="detail"><p class="empty" data-i18n="detailEmpty">층을 선택하고 지도 속 교실을 눌러 주세요.</p></aside>
+      </div>
+    </section>
+
+    <section id="route" class="view">
+      <div class="section-head"><div><p class="eyebrow">Text Route</p><h1 data-i18n="routeTitle">출발지를 직접 선택하세요</h1></div></div>
+      <div class="panel form-grid"><label><span data-i18n="start">출발 위치</span><select id="routeStart"></select></label><label><span data-i18n="destination">목적지</span><select id="routeEnd"></select></label><button id="routeGo" data-i18n="makeRoute">안내 만들기</button></div>
+      <div id="routeResult" class="route-result" aria-live="polite"></div>
+      <p class="safety" data-i18n="safety">⚠ 비상상황에서는 화면 안내보다 학교 교직원의 안내를 우선해 주세요.</p>
+    </section>
+
+    <section id="quest" class="view">
+      <div class="section-head"><div><p class="eyebrow">Campus Quest</p><h1 data-i18n="questTitle">역할별 새롬길 탐방</h1></div><button id="resetQuest" class="ghost" data-i18n="reset">탐방 진행 초기화</button></div>
+      <div class="quest-grid">
+        <aside class="panel"><label><span data-i18n="iAm">나는</span><select id="userType"><option value="신입생">신입생</option><option value="전입생">전입생</option><option value="학부모">학부모</option><option value="교류학생">교류학생</option><option value="방문객">방문객</option></select></label><div class="progress"><div id="progressBar"></div></div><p id="progressText"></p><div id="badges" class="badges"></div></aside>
+        <article id="questCard" class="panel"></article>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="assertive" hidden></div>
+  <nav class="bottom" aria-label="모바일 메뉴"><button data-view="home">⌂<span data-i18n="navHome">홈</span></button><button data-view="map">▦<span data-i18n="navMap">지도</span></button><button data-view="route">➜<span data-i18n="navRoute">길안내</span></button><button data-view="quest">⚑<span data-i18n="navQuest">탐방</span></button></nav>
+  <script src="data.js"></script><script src="app.js"></script>
+</body>
+</html>

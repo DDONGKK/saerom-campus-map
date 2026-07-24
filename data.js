@@ -1,0 +1,174 @@
+(function () {
+  "use strict";
+  const place = (id, name, aliases, floor, room, category, description, mapX, mapY, extra) => Object.assign({
+    id, name, aliases, floor, room, category, description, mapX, mapY,
+    needsCoordinateReview: true, accessLevel: "public", searchable: true, active: true,
+    usageInfo: "학교 안내와 담당 교사의 안내에 따라 이용합니다.", openHours: "학교 운영 시간 내",
+    rules: ["수업과 학교생활에 방해되지 않도록 이용하기"],
+    newStudentTip: "평면도에서 호실과 위치를 먼저 확인해 보세요.",
+    visitorTip: "방문 목적과 위치는 학교 안내에 따라 확인해 주세요.",
+    routeHint: `${floor}층 ${room}호를 평면도에서 확인해 주세요.`
+  }, extra || {});
+
+  window.SAEROM_DATA = {
+    buildings: [{ id: "main", name: "새롬고등학교 본관" }],
+    floors: [
+      { id: "all", number: 0, name: "전체 배치도", image: "assets/maps/map-all.png" },
+      { id: "1", number: 1, name: "1층", image: "assets/maps/map-1f.png" },
+      { id: "2", number: 2, name: "2층", image: "assets/maps/map-2f.png" },
+      { id: "3", number: 3, name: "3층", image: "assets/maps/map-3f.png" },
+      { id: "4", number: 4, name: "4층", image: "assets/maps/map-4f.png" },
+      { id: "5", number: 5, name: "5층", image: "assets/maps/map-5f.png" }
+    ],
+    places: [
+      place("health-112", "보건실", ["건강실"], 1, "112", "지원시설", "건강 상담과 응급 처치를 받을 수 있는 공간", 54, 16, { officialQrCode: "SRM-HEALTH-112", routeHint: "1층 상단 복도에 있습니다.", rules: ["응급상황은 즉시 주변 교사에게 알리기"] }),
+      place("wee-114", "Wee클래스", ["위클래스", "상담실"], 1, "114", "상담시설", "학생 상담을 위한 공간", 30, 29),
+      place("library-116", "도서실", ["도서관"], 1, "116", "학습시설", "책을 읽고 학습할 수 있는 공간", 37, 57, { officialQrCode: "SRM-LIBRARY-116" }),
+      place("av-120", "시청각실", [], 1, "120", "특별실", "시청각 활동을 위한 공간", 58, 57),
+      place("broadcast-106", "방송실", ["방송부실"], 1, "106", "특별실", "교내 방송을 운영하는 공간", 76, 41),
+      place("admin-104", "행정실", [], 1, "104", "행정시설", "학교 행정 업무를 담당하는 공간", 76, 64),
+      place("food-209", "식생활교육관", ["급식실"], 2, "209", "생활시설", "학교 급식을 이용하는 공간", 32, 22, { officialQrCode: "SRM-FOOD-209" }),
+      place("career-class-208", "진로진학수업실", ["진로실"], 2, "208", "특별실", "진로 진학 수업을 위한 공간", 64, 22),
+      place("education-info-204", "교육정보부", ["정보부"], 2, "204", "부서", "교육정보부의 기본 위치", 79, 45),
+      place("computer-212", "컴퓨터실", ["컴실", "정보실"], 2, "212", "특별실", "공용 컴퓨터를 활용하는 학습 공간", 44, 67, { officialQrCode: "SRM-COMPUTER-212" }),
+      place("art-216", "미술실2", ["미술실"], 2, "216", "특별실", "미술 활동을 위한 공간", 61, 91),
+      place("hall-312", "다목적강당", ["강당", "체육관"], 3, "312", "체육·행사시설", "체육과 학교 행사를 위한 공간", 21, 43),
+      place("career-310", "진로진학부 상담실", ["진로상담실", "상담실"], 3, "310", "상담시설", "진로와 진학 상담을 위한 공간", 55, 25),
+      place("grade1-319", "1학년 교무실", ["1학년부"], 3, "319, 320", "교무실", "1학년부의 기본 근무 공간", 60, 58),
+      place("grade2-421", "2학년 교무실", ["2학년부"], 4, "421, 422", "교무실", "2학년부의 기본 근무 공간", 56, 42),
+      place("grade3-521", "3학년 교무실", ["3학년부"], 5, "521, 522", "교무실", "3학년부의 기본 근무 공간", 53, 56)
+    ],
+    departments: [
+      { id: "education-info", name: "교육정보부", aliases: ["정보부"], basePlaceId: "education-info-204", duties: "세부 업무는 학교의 공식 안내를 확인하세요." },
+      { id: "career", name: "진로진학부", aliases: ["진로부"], basePlaceId: "career-310", duties: "진로·진학 상담" },
+      { id: "grade1", name: "1학년부", aliases: [], basePlaceId: "grade1-319", duties: "1학년 관련 업무" },
+      { id: "grade2", name: "2학년부", aliases: [], basePlaceId: "grade2-421", duties: "2학년 관련 업무" },
+      { id: "grade3", name: "3학년부", aliases: [], basePlaceId: "grade3-521", duties: "3학년 관련 업무" },
+      { id: "administration", name: "행정실", aliases: [], basePlaceId: "admin-104", duties: "학교 행정 업무" }
+    ],
+    teachers: [],
+    routes: [
+      { id: "gate", name: "정문", floor: 1 }, { id: "lobby", name: "중앙 현관", floor: 1 }, { id: "food-start", name: "식생활교육관", floor: 2, placeId: "food-209" },
+      { id: "stairs-1", name: "1층 중앙 계단", floor: 1 }, { id: "stairs-2", name: "2층 중앙 계단", floor: 2 }, { id: "stairs-3", name: "3층 중앙 계단", floor: 3 }, { id: "stairs-4", name: "4층 중앙 계단", floor: 4 }, { id: "stairs-5", name: "5층 중앙 계단", floor: 5 }
+    ],
+    quests: [{ id: "new-student", name: "새롬길 신입생 탐방", placeIds: ["health-112", "library-116", "food-209", "computer-212", "stairs-center"] }],
+    questProfiles: {
+      "신입생": ["health-112", "library-116", "food-209", "computer-212", "stairs-center"],
+      "전입생": ["admin-104", "grade2-421", "library-116", "food-209", "career-310"],
+      "학부모": ["admin-104", "career-310", "grade1-319", "av-120"],
+      "교류학생": ["library-116", "computer-212", "hall-312", "art-216", "food-209"],
+      "방문객": ["admin-104", "av-120", "hall-312", "health-112"]
+    },
+    quizzes: [
+      { placeId: "health-112", question: "보건실을 이용해야 하는 상황으로 가장 알맞은 것은 무엇인가요?", options: ["몸이 아프거나 다쳐 도움을 받아야 할 때", "친구의 개인정보를 알아보고 싶을 때", "수업을 피하고 싶을 때"], answer: 0 },
+      { placeId: "library-116", question: "도서실에서 알맞은 행동은 무엇인가요?", options: ["사용한 책을 안내된 곳에 둔다.", "다른 학생의 계정으로 컴퓨터에 로그인한다.", "큰 소리로 통화한다."], answer: 0 },
+      { placeId: "food-209", question: "급식실에서 지켜야 할 행동은 무엇인가요?", options: ["이동 동선을 지키고 차례대로 이용한다.", "친구의 식판을 허락 없이 촬영해 올린다.", "통로에 가방을 둔다."], answer: 0 },
+      { placeId: "computer-212", question: "공용 컴퓨터 사용 후 해야 할 행동은 무엇인가요?", options: ["계정에서 로그아웃한다.", "비밀번호를 메모장에 저장한다.", "로그인 상태로 자리를 떠난다."], answer: 0 },
+      { placeId: "stairs-center", question: "학교 공식 QR을 확인하는 방법으로 알맞은 것은 무엇인가요?", options: ["학교명과 공식 코드 안내를 확인한다.", "출처가 없어도 바로 개인정보를 입력한다.", "주소가 짧으면 무조건 믿는다."], answer: 0 }
+    ],
+    qrCodes: [
+      { code: "SRM-HEALTH-112", placeId: "health-112" }, { code: "SRM-LIBRARY-116", placeId: "library-116" },
+      { code: "SRM-FOOD-209", placeId: "food-209" }, { code: "SRM-COMPUTER-212", placeId: "computer-212" },
+      { code: "SRM-STAIRS-CENTER", placeId: "stairs-center", label: "중앙 계단" }
+    ]
+  };
+
+  const room = (floor, number, name, x, y, category) => place(
+    `room-${floor}-${number}`, name, [], floor, String(number), category || "교실",
+    `${name}으로 사용하는 ${number}호입니다.`, x, y,
+    { usageInfo: "수업 또는 업무 중에는 담당 교직원의 안내에 따라 이용합니다.", routeHint: `${floor}층 평면도에서 ${number}호를 확인해 주세요.` }
+  );
+  const extraRooms = [
+    room(1,101,"청소원휴게실",76,79,"지원시설"), room(1,102,"숙직실",76,73,"지원시설"), room(1,103,"시설관리실",76,68,"지원시설"),
+    room(1,105,"교장실",76,47,"행정시설"), room(1,107,"교무센터",76,33,"교무실"), room(1,108,"전산실",82,16,"특별실"),
+    room(1,110,"통합교육지원실",71,16,"지원시설"), room(1,111,"온새미로 카페",62,16,"생활시설"), room(1,115,"문서고",30,38,"지원시설"),
+    room(1,117,"미술실1",35,70,"특별실"), room(1,118,"독도체험관",36,85,"체험시설"), room(1,119,"독도체험관",36,92,"체험시설"),
+    room(1,216,"미술실2",61,90,"특별실"),
+    room(2,120,"시청각실",55,64,"특별실"), room(2,201,"1-1",79,70,"학급교실"), room(2,202,"1-2",79,63,"학급교실"), room(2,203,"1-3",79,56,"학급교실"),
+    room(2,205,"1-4",79,39,"학급교실"), room(2,206,"디바이스 보관실",79,31,"지원시설"), room(2,207,"운영위원회실",79,24,"회의실"),
+    room(2,210,"가사실",44,41,"특별실"), room(2,211,"체력단련실",44,55,"체육시설"), room(2,213,"남교사휴게실",44,73,"휴게공간"),
+    room(2,214,"여교사휴게실",44,78,"휴게공간"), room(2,215,"기술가정실",44,86,"특별실"),
+    room(3,301,"지구과학실험실",70,84,"특별실"), room(3,302,"물리학실험실",70,73,"특별실"),
+    room(3,303,"1-5",79,60,"학급교실"), room(3,304,"1-6",79,52,"학급교실"), room(3,305,"1-7",79,44,"학급교실"),
+    room(3,306,"1-8",49,14,"학급교실"), room(3,307,"1-9",43,14,"학급교실"), room(3,308,"1-10",36,14,"학급교실"), room(3,309,"1-11",29,14,"학급교실"),
+    room(3,313,"학생회실",41,76,"학생자치시설"), room(3,314,"화학실험실",41,84,"특별실"), room(3,315,"과학교과실",57,93,"특별실"),
+    room(3,316,"생명과학실험실",59,84,"특별실"), room(3,317,"자습실(진리1)",66,65,"학습시설"), room(3,318,"자습실(진리2)",56,65,"학습시설"), room(3,320,"1학년 교무실",64,58,"교무실"),
+    room(4,401,"2-1",93,27,"학급교실"), room(4,402,"2-2",86,27,"학급교실"), room(4,403,"2-3",79,27,"학급교실"), room(4,404,"2-4",72,27,"학급교실"),
+    room(4,405,"2-5",65,27,"학급교실"), room(4,406,"2-6",58,27,"학급교실"), room(4,407,"2-7",51,27,"학급교실"), room(4,408,"2-8",37,27,"학급교실"),
+    room(4,409,"2-9",30,27,"학급교실"), room(4,410,"2-10",23,27,"학급교실"), room(4,411,"2-11",16,27,"학급교실"), room(4,412,"탈의실2",10,44,"지원시설"),
+    room(4,413,"윤리실",23,59,"특별실"), room(4,414,"음악실2",31,59,"특별실"), room(4,415,"2-12",67,59,"학급교실"), room(4,416,"2-13",76,59,"학급교실"),
+    room(4,417,"아카데미 및 활동교실",86,59,"활동시설"), room(4,418,"학생안전부",94,44,"부서"), room(4,419,"진학실",68,43,"상담시설"), room(4,420,"진로실",68,51,"상담시설"), room(4,422,"2학년 교무실",59,42,"교무실"),
+    room(5,501,"3-1",76,91,"학급교실"), room(5,502,"3-2",76,84,"학급교실"), room(5,503,"3-3",76,77,"학급교실"), room(5,504,"3-4",76,70,"학급교실"),
+    room(5,505,"3-5",76,63,"학급교실"), room(5,506,"3-6",76,56,"학급교실"), room(5,507,"3-7",76,49,"학급교실"), room(5,508,"3-8",76,40,"학급교실"),
+    room(5,509,"3-9",76,33,"학급교실"), room(5,510,"3-10",76,26,"학급교실"), room(5,511,"3-11",76,19,"학급교실"), room(5,512,"3-12",60,16,"학급교실"),
+    room(5,513,"다목적교실",29,29,"특별실"), room(5,514,"다목적교실",29,37,"특별실"), room(5,515,"3-13",30,70,"학급교실"), room(5,516,"교양교실",30,77,"특별실"),
+    room(5,517,"제2외국어실",30,84,"특별실"), room(5,518,"사회교과실",60,91,"특별실"), room(5,519,"자습실(한물1)",56,68,"학습시설"), room(5,520,"자습실(한물2)",46,68,"학습시설"),
+    room(5,522,"3학년 교무실",59,56,"교무실"), room(5,523,"창고",26,16,"지원시설")
+  ];
+  const existing = new Set(window.SAEROM_DATA.places.map(p => `${p.floor}-${p.room}`));
+  window.SAEROM_DATA.places.push(...extraRooms.filter(p => !existing.has(`${p.floor}-${p.room}`)));
+  window.SAEROM_DATA.places = window.SAEROM_DATA.places.filter(p => !["room-3-320", "room-4-422", "room-5-522"].includes(p.id));
+  window.SAEROM_DATA.places.forEach(p => { p.aliases = []; });
+  window.SAEROM_DATA.departments.forEach(d => { d.aliases = []; });
+
+  // 2026-07 revised floor-plan coordinates. Values are percentages of each new map image.
+  const revisedCoordinates = {
+    1: {
+      "101":[75,88], "102":[75,83], "103":[75,77], "104":[72,72], "105":[75,66], "106":[75,59], "107":[75,52], "108":[75,44],
+      "109":[75,39], "110":[75,33], "111":[75,27], "112":[75,20], "113":[59,17], "114":[38,28], "115":[38,36], "116":[35,53],
+      "117":[34,70], "118":[34,81], "119":[35,89], "120":[56,53], "216":[60,90]
+    },
+    2: {
+      "120":[61,57], "201":[76,64], "202":[76,58], "203":[76,52], "204":[76,43], "205":[76,36], "206":[76,30], "207":[76,24],
+      "208":[63,21], "209":[35,17], "210":[47,37], "211":[47,53], "212":[47,60], "213":[47,68], "214":[47,72], "215":[47,78], "216":[62,89]
+    },
+    3: {
+      "301":[77,88], "302":[77,76], "303":[77,69], "304":[77,62], "305":[77,56], "306":[77,48], "307":[77,42], "308":[77,36],
+      "309":[77,30], "310":[64,28], "311":[36,16], "312":[35,32], "313":[46,75], "314":[46,83], "315":[63,92], "316":[63,85],
+      "317":[64,67], "318":[57,67], "319, 320":[63,55]
+    },
+    4: {
+      "401":[31,18], "402":[31,26], "403":[31,34], "404":[31,41], "405":[31,49], "406":[31,56], "407":[31,63], "408":[31,71],
+      "409":[31,78], "410":[31,85], "411":[31,91], "412":[46,94], "413":[66,87], "414":[66,80], "415":[66,41], "416":[66,34],
+      "417":[66,27], "418":[47,16], "419":[45,49], "420":[54,49], "421, 422":[49,61]
+    },
+    5: {
+      "501":[72,91], "502":[72,85], "503":[72,79], "504":[72,73], "505":[72,65], "506":[72,58], "507":[72,52], "508":[72,41],
+      "509":[72,34], "510":[72,27], "511":[72,20], "512":[54,17], "513":[31,29], "514":[31,37], "515":[31,73], "516":[31,80],
+      "517":[31,87], "518":[56,92], "519":[56,66], "520":[46,66], "521, 522":[52,54], "523":[27,17]
+    }
+  };
+  window.SAEROM_DATA.places.forEach(p => {
+    const point = revisedCoordinates[p.floor] && revisedCoordinates[p.floor][p.room];
+    if (point) { p.mapX = point[0]; p.mapY = point[1]; p.needsCoordinateReview = false; }
+  });
+
+  // Rooms newly shown or renamed on the revised maps.
+  if (!window.SAEROM_DATA.places.some(p => p.floor === 1 && p.room === "113")) window.SAEROM_DATA.places.push(room(1,113,"평가실",59,17,"특별실"));
+  if (!window.SAEROM_DATA.places.some(p => p.floor === 3 && p.room === "311")) window.SAEROM_DATA.places.push(room(3,311,"음악실1",36,16,"특별실"));
+  const revisedNames = {
+    "room-3-306":["303","1-8"],
+    "room-4-412":["412","컴퓨터실2"],
+    "room-4-413":["413","음악준비실"],
+    "room-4-417":["417","수학과교실·크롬북·아이패드 보관 및 활용교실"],
+    "room-4-419":["419","자습실(품격1)"],
+    "room-4-420":["420","자습실(품격2)"]
+  };
+  window.SAEROM_DATA.places.forEach(p => {
+    const revised = revisedNames[p.id];
+    if (!revised) return;
+    p.room = revised[0]; p.name = revised[1]; p.description = `${revised[1]}으로 사용하는 ${revised[0]}호입니다.`;
+  });
+
+  // Final 1F portrait-map alignment (5064.png).
+  const finalFloor1Coordinates = {
+    "101":[62,90], "102":[62,85], "103":[62,78], "104":[62,71], "105":[62,63], "106":[62,54], "107":[62,46], "108":[61,38],
+    "109":[61,33], "110":[61,28], "111":[61,22], "112":[61,16], "113":[52,14], "114":[36,23], "115":[36,30], "116":[33,49],
+    "117":[32,64], "118":[31,77], "119":[31,87], "120":[49,49]
+  };
+  window.SAEROM_DATA.places = window.SAEROM_DATA.places.filter(p => p.id !== "room-1-216");
+  window.SAEROM_DATA.places.filter(p => p.floor === 1).forEach(p => {
+    const point = finalFloor1Coordinates[p.room];
+    if (point) { p.mapX = point[0]; p.mapY = point[1]; p.needsCoordinateReview = false; }
+  });
+}());
