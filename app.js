@@ -88,6 +88,18 @@
     };
     const roleTaskKo={"신입생":"새 학교생활에 필요한 이용 방법을 익혀 보세요.","전입생":"이전 학교와 다른 이용 규칙을 확인해 보세요.","학부모":"학생의 안전과 개인정보를 지키는 방문 방법을 확인해 보세요.","교류학생":"서로의 문화를 존중하며 공동 규칙을 익혀 보세요.","방문객":"학교의 출입 절차와 안내 동선을 확인해 보세요."};
     const roleTaskEn={"신입생":"Learn how to use this place during your new school life.","전입생":"Check rules that may differ from your previous school.","학부모":"Review how to visit while protecting student safety and privacy.","교류학생":"Learn shared rules while respecting different cultures.","방문객":"Review the visitor route and entry procedure."};
+    const custom=p&&p.missions&&p.missions[role];
+    if(custom){
+      const answers=(state.lang==="en"?custom.optionsEn:custom.optionsKo)||custom.optionsKo;
+      if(Array.isArray(answers)&&answers.length>=2){
+        return {
+          task:text(custom.taskKo||"",custom.taskEn||custom.taskKo||""),
+          q:text(custom.questionKo||"",custom.questionEn||custom.questionKo||""),
+          a:answers.slice(),
+          correctIndex:Number(custom.correctIndex)||0
+        };
+      }
+    }
     const answers=(state.lang==="en"?scenarios[kind].en:scenarios[kind].ko).slice();
     const seed=Array.from(role+id).reduce((sum,ch)=>sum+ch.charCodeAt(0),0);
     const shift=seed%answers.length;
@@ -153,4 +165,11 @@
 
   init();
   setupRouteCompletion();
+  window.SAEROM_APP_REFRESH=function(){
+    renderFrequent();
+    renderSearch(state.query);
+    renderMap();
+    initRoutes();
+    renderQuest();
+  };
 }());

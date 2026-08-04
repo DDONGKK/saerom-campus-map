@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#073b75">
+  <title>새롬길 관리자</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="admin.css">
+  <script src="firebase-config.js"></script>
+</head>
+<body class="admin-page">
+  <header class="admin-header">
+    <a class="brand" href="index.html"><img src="assets/brand/saeromgil-logo.png" alt="새롬길"></a>
+    <div><strong>관리자 창구</strong><small>수정 내용은 저장 즉시 공개 웹에 반영됩니다.</small></div>
+    <button id="signOut" hidden>로그아웃</button>
+  </header>
+  <main class="admin-main">
+    <section id="loginPanel" class="panel login-panel">
+      <p class="eyebrow">ADMIN LOGIN</p>
+      <h1>관리자 로그인</h1>
+      <p>허용된 Google 계정만 수정할 수 있습니다.</p>
+      <button id="signIn">Google로 로그인</button>
+      <p id="loginMessage" class="admin-message" aria-live="polite"></p>
+    </section>
+
+    <section id="adminPanel" hidden>
+      <div class="admin-toolbar panel">
+        <div><span class="eyebrow">SIGNED IN</span><strong id="userEmail"></strong></div>
+        <a href="index.html" target="_blank" rel="noopener">공개 웹 열기 ↗</a>
+      </div>
+
+      <div class="admin-grid">
+        <aside class="panel admin-list">
+          <label>장소 찾기<input id="placeSearch" placeholder="호실 또는 장소명"></label>
+          <select id="floorFilter"><option value="all">전 층</option><option value="1">1층</option><option value="2">2층</option><option value="3">3층</option><option value="4">4층</option><option value="5">5층</option></select>
+          <div id="placeList"></div>
+        </aside>
+
+        <form id="placeForm" class="panel admin-editor">
+          <p class="eyebrow">PLACE EDITOR</p>
+          <h2 id="editorTitle">장소를 선택하세요</h2>
+          <input id="placeId" type="hidden">
+          <div class="field-row"><label>호실<input id="room" disabled></label><label>층<input id="floor" disabled></label></div>
+          <label>장소명<input id="name" required></label>
+          <label>분류<input id="category" required></label>
+          <label>설명<textarea id="description" rows="3"></textarea></label>
+          <label>이용 안내<textarea id="usageInfo" rows="3"></textarea></label>
+          <div class="checks"><label><input id="active" type="checkbox"> 지도에 표시</label><label><input id="searchable" type="checkbox"> 검색 허용</label></div>
+
+          <details>
+            <summary>역할별 탐방 미션 편집</summary>
+            <label>역할<select id="missionRole"><option>신입생</option><option>전입생</option><option>학부모</option><option>교류학생</option><option>방문객</option></select></label>
+            <label>미션 안내(한국어)<textarea id="taskKo" rows="2"></textarea></label>
+            <label>미션 안내(영어)<textarea id="taskEn" rows="2"></textarea></label>
+            <label>문제(한국어)<textarea id="questionKo" rows="2"></textarea></label>
+            <label>문제(영어)<textarea id="questionEn" rows="2"></textarea></label>
+            <div class="field-row"><label>선택지 1<input id="option1"></label><label>Option 1<input id="optionEn1"></label></div>
+            <div class="field-row"><label>선택지 2<input id="option2"></label><label>Option 2<input id="optionEn2"></label></div>
+            <div class="field-row"><label>선택지 3<input id="option3"></label><label>Option 3<input id="optionEn3"></label></div>
+            <label>정답 선택지<select id="correctIndex"><option value="0">1번</option><option value="1">2번</option><option value="2">3번</option></select></label>
+            <button id="clearMission" class="ghost" type="button">이 역할의 맞춤 미션 지우기</button>
+          </details>
+          <div class="editor-actions"><button type="submit">저장하고 바로 반영</button><button id="resetPlace" class="ghost" type="button">기본값으로 되돌리기</button></div>
+          <p id="saveMessage" class="admin-message" aria-live="polite"></p>
+        </form>
+      </div>
+
+      <section class="panel map-admin" hidden>
+        <p class="eyebrow">MAP IMAGES</p><h2>지도 이미지 교체</h2>
+        <p>PNG/JPG 파일을 올리면 해당 지도가 공개 웹에 즉시 적용됩니다.</p>
+        <div class="field-row"><label>지도 종류<select id="mapFloor"><option value="all">전체 배치도</option><option value="1">1층</option><option value="2">2층</option><option value="3">3층</option><option value="4">4층</option><option value="5">5층</option></select></label><label>이미지 파일<input id="mapFile" type="file" accept="image/png,image/jpeg,image/webp"></label></div>
+        <button id="uploadMap">지도 업로드 및 적용</button><progress id="uploadProgress" max="100" value="0" hidden></progress>
+        <p id="uploadMessage" class="admin-message" aria-live="polite"></p>
+      </section>
+    </section>
+  </main>
+  <script src="data.js"></script>
+  <script type="module" src="admin.js"></script>
+</body>
+</html>
