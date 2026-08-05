@@ -55,6 +55,7 @@
           <label>장소명<input id="name" required></label>
           <label>장소명 (영어)<input id="nameEn" placeholder="영어 모드에서만 표시"></label>
           <label>분류<input id="category" required></label>
+          <label>분류 (영어)<input id="categoryEn" placeholder="영어 모드에서만 표시"></label>
           <label>설명<textarea id="description" rows="3"></textarea></label>
           <label>설명 (영어)<textarea id="descriptionEn" rows="3" placeholder="영어 모드에서만 표시"></textarea></label>
           <label>이용 안내<textarea id="usageInfo" rows="3"></textarea></label>
@@ -122,6 +123,8 @@
             <div class="field-row"><label>시작 일시<input id="eventStart" type="datetime-local" required></label><label>종료 일시<input id="eventEnd" type="datetime-local"></label></div>
             <label>행사 설명<textarea id="eventDescription" rows="5" required></textarea></label>
             <label>행사 설명 (영어)<textarea id="eventDescriptionEn" rows="4"></textarea></label>
+            <label>시작 화면 광고판 문구<input id="eventBillboardText" maxlength="180" placeholder="비워 두면 행사 이름이 표시됩니다."></label>
+            <label>시작 화면 광고판 문구 (영어)<input id="eventBillboardTextEn" maxlength="180" placeholder="비워 두면 영어 행사 이름이 표시됩니다."></label>
             <div class="checks"><label><input id="eventActive" type="checkbox" checked> 공개 웹에 표시</label></div>
             <div class="editor-actions"><button type="submit">저장하고 바로 반영</button><button id="deleteEvent" class="ghost danger" type="button" hidden>행사 삭제</button></div>
             <p id="eventMessage" class="admin-message" aria-live="polite"></p>

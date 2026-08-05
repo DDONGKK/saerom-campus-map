@@ -17,7 +17,7 @@
     <nav aria-label="주요 메뉴">
       <button data-view="home" data-i18n="navHome">홈</button>
       <button data-view="map" data-i18n="navMap">지도</button>
-      <button data-view="route" data-i18n="navRoute">길안내</button>
+      <button data-view="route" data-i18n="navRoute">길 안내</button>
       <button data-view="quest" data-i18n="navQuest">탐방</button>
     </nav>
     <div class="settings">
@@ -30,6 +30,7 @@
   <main id="main" tabindex="-1">
     <section id="home" class="view active">
       <div class="hero">
+        <div id="eventBillboard" class="event-billboard" hidden aria-live="polite"><div id="eventBillboardTrack" class="event-billboard-track"></div></div>
         <p class="eyebrow" data-i18n="guide">새롬고등학교 디지털 길잡이</p>
         <h1 data-i18n="heroTitle">교실을 찾고, 학교를 탐험해요.</h1>
         <p data-i18n="heroDesc">장소 검색부터 층별 지도, 길 안내와 행사 안내까지 한곳에서.</p>
@@ -44,7 +45,7 @@
       <h2 data-i18n="quick">빠른 메뉴</h2>
       <div class="quick">
         <button data-view="map">▦<b data-i18n="floorMap">층별 지도</b><span data-i18n="floorMapDesc">1층부터 5층까지</span></button>
-        <button data-view="route">➜<b data-i18n="routeMenu">길안내</b><span data-i18n="routeMenuDesc">출발지를 직접 선택</span></button>
+        <button data-view="route">➜<b data-i18n="routeMenu">길 안내</b><span data-i18n="routeMenuDesc">출발지를 직접 선택</span></button>
         <button data-view="quest">⚑<b data-i18n="questMenu">맞춤 탐방</b><span data-i18n="questMenuDesc">역할별 미션과 퀴즈</span></button>
         <button data-view="events">★<b data-i18n="eventMenu">행사 일정 안내</b><span data-i18n="eventMenuDesc">학교 행사와 장소 확인</span></button>
         <button data-view="report">!<b data-i18n="reportMenu">오류 제보</b><span data-i18n="reportMenuDesc">잘못된 정보를 알려 주세요</span></button>
@@ -88,12 +89,12 @@
       <div class="panel form-grid"><label><span data-i18n="start">출발 위치</span><select id="routeStart"></select></label><label><span data-i18n="destination">목적지</span><select id="routeEnd"></select></label><div class="route-actions"><button id="routeGo" data-i18n="makeRoute">완료</button><button id="healthMode" class="health-mode" type="button" aria-pressed="false" data-i18n="healthMode">몸이 아파요</button></div></div>
       <div id="routeResult" class="route-result" aria-live="polite"></div>
       <section id="routeMapPanel" class="panel route-map-panel" hidden>
-        <div class="route-map-head"><div><p class="eyebrow" data-i18n="visualRoute">지도 길안내</p><h2 id="routeMapTitle"></h2></div><span id="routeModeBadge" class="tag"></span></div>
-        <div id="routeMapFrame" class="route-map-frame"><img id="routeMapImage" alt="길안내 평면도"><svg id="routeOverlay" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"></svg></div>
+        <div class="route-map-head"><div><p class="eyebrow" data-i18n="visualRoute">지도 길 안내</p><h2 id="routeMapTitle"></h2></div><span id="routeModeBadge" class="tag"></span></div>
+        <div id="routeMapFrame" class="route-map-frame"><img id="routeMapImage" alt="길 안내 평면도"><svg id="routeOverlay" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"></svg></div>
         <p id="routeStageText" class="route-stage-text"></p>
         <button id="routeStageDone" class="route-stage-done" type="button" hidden data-i18n="stageDone">이 층 이동 완료</button>
       </section>
-      <p class="safety" data-i18n="safety">⚠ 비상상황에서는 화면 안내보다 학교 교직원의 안내를 우선해 주세요.</p>
+      <p class="safety" data-i18n="safety">⚠ 비상 상황에서는 화면 안내보다 학교 교직원의 안내를 우선해 주세요.</p>
     </section>
 
     <section id="quest" class="view">
@@ -106,7 +107,7 @@
   </main>
 
   <div id="toast" class="toast" role="status" aria-live="assertive" hidden></div>
-  <nav class="bottom" aria-label="모바일 메뉴"><button data-view="home">⌂<span data-i18n="navHome">홈</span></button><button data-view="map">▦<span data-i18n="navMap">지도</span></button><button data-view="route">➜<span data-i18n="navRoute">길안내</span></button><button data-view="quest">⚑<span data-i18n="navQuest">탐방</span></button></nav>
+  <nav class="bottom" aria-label="모바일 메뉴"><button data-view="home">⌂<span data-i18n="navHome">홈</span></button><button data-view="map">▦<span data-i18n="navMap">지도</span></button><button data-view="route">➜<span data-i18n="navRoute">길 안내</span></button><button data-view="quest">⚑<span data-i18n="navQuest">탐방</span></button></nav>
   <footer class="site-footer"><span>새롬길 · Saerom Street</span><a href="admin.html">관리자</a></footer>
   <script src="data.js"></script><script src="app.js"></script><script type="module" src="firebase-live.js"></script>
 </body>
