@@ -38,7 +38,7 @@ header{position:sticky;top:0;z-index:20;min-height:82px;padding:8px clamp(12px,3
 .hotspot:before,.hotspot:after{width:55%!important;height:auto!important;aspect-ratio:1;max-width:46px;min-width:12px}
 
 /* Home event billboard. Only the text moves; overflow stays clipped inside the board. */
-.event-billboard{position:relative;max-width:790px;height:52px;margin:10px 0 22px;overflow:hidden;border:4px solid var(--line);background:var(--navy);color:#fff;box-shadow:4px 4px 0 var(--line);display:flex;align-items:center}
+.event-billboards{display:grid;gap:12px;max-width:790px;margin:10px 0 22px}.event-billboards:empty{display:none}.event-billboard{position:relative;width:100%;height:52px;overflow:hidden;border:4px solid var(--line);background:var(--navy);color:#fff;box-shadow:4px 4px 0 var(--line);display:flex;align-items:center}
 .event-billboard[hidden]{display:none}.event-billboard-track{display:flex;align-items:center;width:max-content;white-space:pre;font-weight:900;font-size:1.05rem;animation:billboard-scroll var(--billboard-duration,20s) linear infinite;will-change:transform}.event-billboard-track span{display:inline-block;flex:none}
 @keyframes billboard-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 @media(prefers-reduced-motion:reduce){.event-billboard-track{animation:none;transform:none}.event-billboard{overflow:auto}}

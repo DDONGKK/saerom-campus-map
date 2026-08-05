@@ -132,16 +132,22 @@
       </section>
 
       <section id="billboardManager" class="admin-manager">
-        <form id="billboardForm" class="panel admin-editor standalone-editor">
-          <p class="eyebrow">HOME BILLBOARD</p>
-          <h2>시작 화면 광고판 관리</h2>
-          <p>공개 웹 시작 화면에서 옆으로 흐르는 행사 안내 문구를 관리합니다.</p>
-          <label>광고판 문구 (한국어)<textarea id="billboardTextKo" rows="3" maxlength="240" placeholder="예: 8월 20일 다목적 강당에서 신입생 환영 행사가 열립니다."></textarea></label>
-          <label>광고판 문구 (영어)<textarea id="billboardTextEn" rows="3" maxlength="240" placeholder="영어 모드에서만 표시되는 문구를 입력하세요."></textarea></label>
-          <div class="checks"><label><input id="billboardActive" type="checkbox"> 공개 웹에 광고판 표시</label></div>
-          <button type="submit">저장하고 바로 반영</button>
-          <p id="billboardMessage" class="admin-message" aria-live="polite"></p>
-        </form>
+        <div class="admin-grid">
+          <aside class="panel admin-list">
+            <div class="list-head"><div><p class="eyebrow">HOME BILLBOARDS</p><h2>광고판 목록</h2></div><button id="newBillboard" type="button">+ 새 광고판</button></div>
+            <div id="billboardAdminList"></div>
+          </aside>
+          <form id="billboardForm" class="panel admin-editor" hidden>
+            <p class="eyebrow">BILLBOARD EDITOR</p>
+            <h2 id="billboardEditorTitle">새 광고판 만들기</h2>
+            <input id="billboardId" type="hidden">
+            <label>광고판 문구 (한국어)<textarea id="billboardTextKo" rows="3" maxlength="240" required placeholder="예: 8월 20일 다목적 강당에서 신입생 환영 행사가 열립니다."></textarea></label>
+            <label>광고판 문구 (영어)<textarea id="billboardTextEn" rows="3" maxlength="240" placeholder="영어 모드에서만 표시되는 문구를 입력하세요."></textarea></label>
+            <div class="checks"><label><input id="billboardActive" type="checkbox" checked> 공개 웹에 광고판 표시</label></div>
+            <div class="editor-actions"><button type="submit">저장하고 바로 반영</button><button id="deleteBillboard" class="ghost danger" type="button" hidden>광고판 삭제</button></div>
+            <p id="billboardMessage" class="admin-message" aria-live="polite"></p>
+          </form>
+        </div>
       </section>
 
       <section id="reportsManager" class="admin-manager">
