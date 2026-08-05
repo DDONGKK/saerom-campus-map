@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="admin.css">
   <link rel="stylesheet" href="admin-features.css">
+  <link rel="stylesheet" href="admin-event-flow.css">
   <script src="firebase-config.js"></script>
 </head>
 <body class="admin-page">
@@ -27,7 +28,7 @@
 
     <section id="adminPanel" hidden>
       <div class="admin-toolbar panel">
-        <div><span class="eyebrow">SIGNED IN</span><strong id="userEmail"></strong></div>
+        <div><span class="eyebrow">SIGNED IN</span><strong id="userEmail" hidden></strong></div>
         <a href="index.html" target="_blank" rel="noopener">공개 웹 열기 ↗</a>
       </div>
 
@@ -86,7 +87,7 @@
       <section id="eventsManager" class="admin-manager">
         <div class="admin-grid">
           <aside class="panel admin-list"><div class="list-head"><div><p class="eyebrow">EVENTS</p><h2>행사 목록</h2></div><button id="newEvent" type="button">+ 새 행사</button></div><div id="eventAdminList"></div></aside>
-          <form id="eventForm" class="panel admin-editor">
+          <form id="eventForm" class="panel admin-editor" hidden>
             <p class="eyebrow">EVENT EDITOR</p><h2 id="eventEditorTitle">새 행사 만들기</h2><input id="eventId" type="hidden">
             <label>행사 이름<input id="eventTitle" maxlength="120" required></label>
             <label>행사 이름 (영어, 선택)<input id="eventTitleEn" maxlength="120"></label>
