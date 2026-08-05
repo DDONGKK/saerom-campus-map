@@ -13,9 +13,9 @@
   window.SAEROM_DATA = {
     buildings: [{ id: "main", name: "새롬고등학교 본관" }],
     floors: [
-      { id: "all", number: 0, name: "전체 배치도", image: "assets/maps/map-all.png" },
+      { id: "all", number: 0, name: "전체 배치도", image: "assets/maps/map-all.png?v=20260805-2" },
       { id: "1", number: 1, name: "1층", image: "assets/maps/map-1f.png" },
-      { id: "2", number: 2, name: "2층", image: "assets/maps/map-2f.png" },
+      { id: "2", number: 2, name: "2층", image: "assets/maps/map-2f.png?v=20260805-2" },
       { id: "3", number: 3, name: "3층", image: "assets/maps/map-3f.png" },
       { id: "4", number: 4, name: "4층", image: "assets/maps/map-4f.png" },
       { id: "5", number: 5, name: "5층", image: "assets/maps/map-5f.png" }

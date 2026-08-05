@@ -2,7 +2,10 @@
   "hosting": {
     "public": ".",
     "ignore": ["firebase.json", "firestore.rules", "storage.rules", "package.json", "pnpm-lock.yaml", "**/.*", "**/node_modules/**", "PROGRESS.md", "TEST_CHECKLIST.md"],
-    "headers": [{"source": "**/*.@(js|css)", "headers": [{"key": "Cache-Control", "value": "no-cache"}]}]
+    "headers": [
+      {"source": "**/*.@(js|css)", "headers": [{"key": "Cache-Control", "value": "no-cache"}]},
+      {"source": "assets/maps/**", "headers": [{"key": "Cache-Control", "value": "no-cache"}]}
+    ]
   },
   "firestore": {"rules": "firestore.rules"},
   "storage": {"rules": "storage.rules"}
