@@ -116,12 +116,12 @@
           <form id="eventForm" class="panel admin-editor" hidden>
             <p class="eyebrow">EVENT EDITOR</p><h2 id="eventEditorTitle">새 행사 만들기</h2><input id="eventId" type="hidden">
             <label>행사 이름<input id="eventTitle" maxlength="120" required></label>
-            <label>행사 이름 (영어, 선택)<input id="eventTitleEn" maxlength="120"></label>
+            <label>행사 이름 (영어)<input id="eventTitleEn" maxlength="120"></label>
             <label>행사 장소<select id="eventPlace" required></select></label>
             <label>장소를 직접 적는 경우 (선택)<input id="eventLocation" maxlength="120" placeholder="목록에 없는 장소만 입력"></label>
             <div class="field-row"><label>시작 일시<input id="eventStart" type="datetime-local" required></label><label>종료 일시<input id="eventEnd" type="datetime-local"></label></div>
             <label>행사 설명<textarea id="eventDescription" rows="5" required></textarea></label>
-            <label>행사 설명 (영어, 선택)<textarea id="eventDescriptionEn" rows="4"></textarea></label>
+            <label>행사 설명 (영어)<textarea id="eventDescriptionEn" rows="4"></textarea></label>
             <div class="checks"><label><input id="eventActive" type="checkbox" checked> 공개 웹에 표시</label></div>
             <div class="editor-actions"><button type="submit">저장하고 바로 반영</button><button id="deleteEvent" class="ghost danger" type="button" hidden>행사 삭제</button></div>
             <p id="eventMessage" class="admin-message" aria-live="polite"></p>
