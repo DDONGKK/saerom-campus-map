@@ -1,11 +1,13 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import { getFirestore, collection, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+import { getFirestore, collection, doc, onSnapshot, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 const config = window.SAEROM_FIREBASE_CONFIG || {};
 if (config.apiKey && config.projectId) {
   const app = initializeApp(config);
   const db = getFirestore(app);
   const D = window.SAEROM_DATA;
+  window.SAEROM_EVENTS = [];
+  window.SAEROM_SUBMIT_REPORT = data => addDoc(collection(db, "reports"), Object.assign({}, data, { status: "new", createdAt: serverTimestamp() }));
   const original = new Map((D.places || []).map(place => [place.id, structuredClone(place)]));
   let siteLoaded = false;
   let placesLoaded = false;
@@ -32,4 +34,9 @@ if (config.apiKey && config.projectId) {
     placesLoaded = true;
     refresh();
   }, () => { placesLoaded = true; refresh(); });
+
+  onSnapshot(collection(db, "events"), snapshot => {
+    window.SAEROM_EVENTS = snapshot.docs.map(item => Object.assign({ id: item.id }, item.data()));
+    refresh();
+  }, () => { window.SAEROM_EVENTS = []; refresh(); });
 }

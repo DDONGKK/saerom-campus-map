@@ -23,7 +23,7 @@ function selectPlace(id){selectedId=id;const place=effectivePlace(id);$("#placeI
 async function loadOverrides(){overrides=new Map();const snapshot=await getDocs(collection(db,"places"));snapshot.forEach(item=>overrides.set(item.id,item.data()));renderList();if(selectedId)selectPlace(selectedId);}
 
 if(!ready){message($("#loginMessage"),"Firebase 프로젝트 연결 정보가 아직 설정되지 않았습니다.","error");$("#signIn").disabled=true;}else{
-  app=initializeApp(config);auth=getAuth(app);db=getFirestore(app);storage=getStorage(app);
+  app=initializeApp(config);auth=getAuth(app);db=getFirestore(app);storage=getStorage(app);window.SAEROM_ADMIN_CONTEXT={auth,db};window.dispatchEvent(new CustomEvent("saerom-admin-ready",{detail:window.SAEROM_ADMIN_CONTEXT}));
   $("#signIn").onclick=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider());}catch(error){message($("#loginMessage"),`로그인 실패: ${error.message}`,"error");}};
   $("#signOut").onclick=()=>signOut(auth);
   onAuthStateChanged(auth,async user=>{$("#loginPanel").hidden=Boolean(user);$("#adminPanel").hidden=!user;$("#signOut").hidden=!user;if(!user)return;$("#userEmail").textContent=user.email||"Google 계정";try{await loadOverrides();selectPlace([...basePlaces.keys()][0]);}catch(error){message($("#saveMessage"),`데이터를 읽을 수 없습니다: ${error.message}`,"error");}});

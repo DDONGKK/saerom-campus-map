@@ -46,9 +46,28 @@
         <button data-view="map">▦<b data-i18n="floorMap">층별 지도</b><span data-i18n="floorMapDesc">1층부터 5층까지</span></button>
         <button data-view="route">➜<b data-i18n="routeMenu">길안내</b><span data-i18n="routeMenuDesc">출발지를 직접 선택</span></button>
         <button data-view="quest">⚑<b data-i18n="questMenu">맞춤 탐방</b><span data-i18n="questMenuDesc">역할별 미션과 퀴즈</span></button>
+        <button data-view="events">★<b data-i18n="eventMenu">행사 일정 안내</b><span data-i18n="eventMenuDesc">학교 행사와 장소 확인</span></button>
+        <button data-view="report">!<b data-i18n="reportMenu">오류 제보</b><span data-i18n="reportMenuDesc">잘못된 정보를 알려주세요</span></button>
       </div>
       <h2 data-i18n="frequent">자주 찾는 장소</h2>
       <div id="frequent" class="chips"></div>
+    </section>
+
+    <section id="events" class="view">
+      <div class="section-head"><div><p class="eyebrow">School Events</p><h1 data-i18n="eventTitle">행사 일정 안내</h1></div></div>
+      <div id="eventList" class="event-list" aria-live="polite"></div>
+    </section>
+
+    <section id="report" class="view">
+      <div class="section-head"><div><p class="eyebrow">Error Report</p><h1 data-i18n="reportTitle">오류 제보</h1></div></div>
+      <form id="reportForm" class="panel report-form">
+        <label><span data-i18n="reportType">오류 종류</span><select id="reportType"><option value="map" data-i18n="reportMap">지도·길안내 오류</option><option value="place" data-i18n="reportPlace">장소 정보 오류</option><option value="quest" data-i18n="reportQuest">탐방 미션 오류</option><option value="other" data-i18n="reportOther">기타 오류</option></select></label>
+        <label><span data-i18n="reportContent">오류 내용</span><textarea id="reportContent" rows="7" maxlength="1000" required data-i18n-placeholder="reportPlaceholder" placeholder="어느 화면에서 어떤 오류가 있었는지 자세히 적어주세요."></textarea></label>
+        <label><span data-i18n="reportContact">연락처 또는 이메일 (선택)</span><input id="reportContact" maxlength="120" data-i18n-placeholder="reportContactPlaceholder" placeholder="답변이 필요한 경우에만 입력하세요."></label>
+        <button type="submit" data-i18n="reportSubmit">완료</button>
+        <p class="report-warning" data-i18n="reportWarning">⚠ 욕설 및, 장난 식 제보는 하지 말아주세요.</p>
+        <p id="reportMessage" class="notice" aria-live="polite"></p>
+      </form>
     </section>
 
     <section id="map" class="view">

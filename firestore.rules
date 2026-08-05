@@ -14,5 +14,20 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isAdmin();
     }
+    match /events/{eventId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /reports/{reportId} {
+      allow create: if request.resource.data.keys().hasOnly(['type', 'content', 'contact', 'page', 'status', 'createdAt'])
+                    && request.resource.data.type in ['map', 'place', 'quest', 'other']
+                    && request.resource.data.content is string
+                    && request.resource.data.content.size() >= 3
+                    && request.resource.data.content.size() <= 1000
+                    && request.resource.data.contact is string
+                    && request.resource.data.contact.size() <= 120
+                    && request.resource.data.status == 'new';
+      allow read, update, delete: if isAdmin();
+    }
   }
 }
