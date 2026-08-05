@@ -7,6 +7,7 @@ if (config.apiKey && config.projectId) {
   const db = getFirestore(app);
   const D = window.SAEROM_DATA;
   window.SAEROM_EVENTS = [];
+  window.SAEROM_BILLBOARD = {};
   window.SAEROM_QUEST_BADGES = {};
   window.SAEROM_SUBMIT_REPORT = data => addDoc(collection(db, "reports"), Object.assign({}, data, { status: "new", createdAt: serverTimestamp() }));
   const original = new Map((D.places || []).map(place => [place.id, structuredClone(place)]));
@@ -23,6 +24,7 @@ if (config.apiKey && config.projectId) {
       if (value.mapImages) D.floors.forEach(floor => { if (value.mapImages[floor.id]) floor.image = value.mapImages[floor.id]; });
       if (value.questProfiles) D.questProfiles = Object.assign({}, D.questProfiles, value.questProfiles);
       window.SAEROM_QUEST_BADGES = value.questBadges || {};
+      window.SAEROM_BILLBOARD = value.billboard || {};
     }
     siteLoaded = true;
     refresh();
