@@ -26,7 +26,7 @@ if(!ready){message($("#loginMessage"),"Firebase 프로젝트 연결 정보가 �
   app=initializeApp(config);auth=getAuth(app);db=getFirestore(app);storage=getStorage(app);window.SAEROM_ADMIN_CONTEXT={auth,db};window.dispatchEvent(new CustomEvent("saerom-admin-ready",{detail:window.SAEROM_ADMIN_CONTEXT}));
   $("#signIn").onclick=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider());}catch(error){message($("#loginMessage"),`로그인 실패: ${error.message}`,"error");}};
   $("#signOut").onclick=()=>signOut(auth);
-  onAuthStateChanged(auth,async user=>{$("#loginPanel").hidden=Boolean(user);$("#adminPanel").hidden=!user;$("#signOut").hidden=!user;if(!user)return;$("#userEmail").textContent=user.email||"Google 계정";try{await loadOverrides();selectPlace([...basePlaces.keys()][0]);}catch(error){message($("#saveMessage"),`데이터를 읽을 수 없습니다: ${error.message}`,"error");}});
+  onAuthStateChanged(auth,async user=>{$("#loginPanel").hidden=Boolean(user);$("#adminPanel").hidden=!user;$("#signOut").hidden=!user;if(!user)return;try{await loadOverrides();selectPlace([...basePlaces.keys()][0]);}catch(error){message($("#saveMessage"),`데이터를 읽을 수 없습니다: ${error.message}`,"error");}});
 }
 
 $("#placeSearch").oninput=renderList;$("#floorFilter").onchange=renderList;$("#missionRole").onchange=loadMission;
