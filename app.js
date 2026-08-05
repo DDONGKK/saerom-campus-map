@@ -27,7 +27,7 @@
   const ROLE_EN = {"신입생":"New student","전입생":"Transfer student","학부모":"Parent/guardian","교류학생":"Exchange student","방문객":"Visitor"};
   const FLOOR_EN = {"전체 배치도":"All floors","1층":"1st floor","2층":"2nd floor","3층":"3rd floor","4층":"4th floor","5층":"5th floor"};
   const ROUTE_EN = {gate:"Main gate",lobby:"Main entrance","food-start":"Food education hall","stairs-1":"Central stairs · Floor 1","stairs-2":"Central stairs · Floor 2","stairs-3":"Central stairs · Floor 3","stairs-4":"Central stairs · Floor 4","stairs-5":"Central stairs · Floor 5"};
-  const PLACE_EN = {"health-112":"Health room","library-116":"Library","food-209":"Food education hall","computer-212":"Computer room","admin-104":"Administration office","grade1-319":"Grade 1 teachers' office","grade2-421":"Grade 2 teachers' office","grade3-521":"Grade 3 teachers' office","career-310":"Career counseling office","av-120":"Audio-visual room","hall-312":"Multipurpose hall","art-216":"Art room 2","wee-114":"Wee Class counseling room"};
+  const PLACE_EN = {"health-112":"Health room","library-116":"Library","food-209":"Food education hall","computer-212":"AI & Information Education Room","admin-104":"Administration office","grade1-319":"Grade 1 teachers' office","grade2-421":"Grade 2 teachers' office","grade3-521":"Grade 3 teachers' office","career-310":"Career counseling office","av-120":"Audio-visual room","hall-312":"Multipurpose hall","art-216":"Art room 2","wee-114":"Wee Class counseling room"};
   const BADGE_KO = {"신입생":"새롬 새싹 배지","전입생":"새로운 시작 배지","학부모":"든든한 동행 배지","교류학생":"글로벌 프렌드 배지","방문객":"새롬 탐험가 배지"};
   const BADGE_EN = {"신입생":"Saerom Sprout Badge","전입생":"Fresh Start Badge","학부모":"Supportive Companion Badge","교류학생":"Global Friend Badge","방문객":"Saerom Explorer Badge"};
 
