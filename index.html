@@ -32,10 +32,10 @@
       <div class="hero">
         <p class="eyebrow" data-i18n="guide">새롬고등학교 디지털 길잡이</p>
         <h1 data-i18n="heroTitle">교실을 찾고, 학교를 탐험해요.</h1>
-        <p data-i18n="heroDesc">장소 검색부터 층별 지도, 텍스트 길안내와 캠퍼스 탐방까지 한곳에서.</p>
+        <p data-i18n="heroDesc">장소 검색부터 층별 지도, 길 안내와 행사 안내까지 한곳에서.</p>
         <form class="hero-search" id="searchForm">
           <label class="sr-only" for="query" data-i18n="searchLabel">장소 검색</label>
-          <input id="query" name="q" data-i18n-placeholder="searchPlaceholder" placeholder="보건실, 도서실, 2학년 교무실을 검색해 보세요.">
+          <input id="query" name="q" data-i18n-placeholder="searchPlaceholder" placeholder="보건실, 도서실 등을 검색해 보세요.">
           <button data-i18n="searchButton">찾기 →</button>
         </form>
       </div>
@@ -49,8 +49,6 @@
         <button data-view="events">★<b data-i18n="eventMenu">행사 일정 안내</b><span data-i18n="eventMenuDesc">학교 행사와 장소 확인</span></button>
         <button data-view="report">!<b data-i18n="reportMenu">오류 제보</b><span data-i18n="reportMenuDesc">잘못된 정보를 알려 주세요</span></button>
       </div>
-      <h2 data-i18n="frequent">자주 찾는 장소</h2>
-      <div id="frequent" class="chips"></div>
     </section>
 
     <section id="events" class="view">
@@ -80,7 +78,6 @@
             <div id="markers"></div>
             <p id="mapError" hidden data-i18n="mapError">평면도 이미지를 확인해 주세요.</p>
           </div>
-          <p class="caption" data-i18n="mapHint">글자를 가리지 않는 투명 영역을 눌러 장소 정보를 확인하세요.</p>
         </div>
         <aside id="placeDetail" class="detail"><p class="empty" data-i18n="detailEmpty">층을 선택하고 지도 속 교실을 눌러 주세요.</p></aside>
       </div>
