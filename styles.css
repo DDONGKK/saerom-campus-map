@@ -43,5 +43,4 @@ header{position:sticky;top:0;z-index:20;min-height:82px;padding:8px clamp(12px,3
 @keyframes billboard-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 @media(prefers-reduced-motion:reduce){.event-billboard-track{animation:none;transform:none}.event-billboard{overflow:auto}}
 /* Highlight the currently chosen destination in a soft sky-blue tone. */
-#routeEnd:focus{background:#e5f6ff;border-color:#58bcea}
 #routeEnd option:checked{background:#cceeff;color:#07385c;font-weight:900}

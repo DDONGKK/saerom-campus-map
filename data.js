@@ -141,7 +141,7 @@
   if (!window.SAEROM_DATA.places.some(p => p.floor === 1 && p.room === "113")) window.SAEROM_DATA.places.push(room(1,113,"평가실",59,17,"특별실"));
   if (!window.SAEROM_DATA.places.some(p => p.floor === 3 && p.room === "311")) window.SAEROM_DATA.places.push(room(3,311,"음악실1",36,16,"특별실"));
   const revisedNames = {
-    "room-3-306":["303","1-8"],
+    "room-3-306":["306","1-8"],
     "room-4-412":["412","컴퓨터실2"],
     "room-4-413":["413","음악준비실"],
     "room-4-417":["417","수학과교실·크롬북·아이패드 보관 및 활용교실"],
