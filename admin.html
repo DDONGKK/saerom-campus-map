@@ -153,17 +153,24 @@
       </section>
 
       <section id="ddayManager" class="admin-manager">
-        <form id="ddayForm" class="panel admin-editor standalone-editor">
-          <p class="eyebrow">D-DAY EDITOR</p>
-          <h2>D-Day 관리</h2>
-          <p>공개 웹 상단 로고 오른쪽에 표시됩니다. 지정일 다음 날에는 자동으로 사라집니다.</p>
-          <label>D-Day 이름<input id="ddayTitleKo" maxlength="60" required placeholder="예: 중간고사"></label>
-          <label>D-Day 이름 (영어)<input id="ddayTitleEn" maxlength="60" placeholder="영어 모드에서 표시"></label>
-          <label>날짜<input id="ddayDate" type="date" required></label>
-          <div class="checks"><label><input id="ddayActive" type="checkbox" checked> 공개 웹에 표시</label></div>
-          <div class="editor-actions"><button type="submit">저장하고 바로 반영</button><button id="deleteDday" class="ghost danger" type="button">D-Day 삭제</button></div>
-          <p id="ddayMessage" class="admin-message" aria-live="polite"></p>
-        </form>
+        <div class="admin-grid">
+          <aside class="panel admin-list">
+            <div class="list-head"><div><p class="eyebrow">D-DAYS</p><h2>D-Day 목록</h2></div><button id="newDday" type="button">+ 새 D-Day</button></div>
+            <div id="ddayAdminList"></div>
+            <p id="ddayListMessage" class="admin-message" aria-live="polite"></p>
+          </aside>
+          <form id="ddayForm" class="panel admin-editor" hidden>
+            <p class="eyebrow">D-DAY EDITOR</p>
+            <h2 id="ddayEditorTitle">새 D-Day 만들기</h2>
+            <input id="ddayId" type="hidden">
+            <label>D-Day 이름<input id="ddayTitleKo" maxlength="60" required placeholder="예: 중간고사"></label>
+            <label>D-Day 이름 (영어)<input id="ddayTitleEn" maxlength="60" placeholder="영어 모드에서 표시"></label>
+            <label>날짜<input id="ddayDate" type="date" required></label>
+            <div class="checks"><label><input id="ddayActive" type="checkbox" checked> 공개 웹에 표시</label></div>
+            <div class="editor-actions"><button type="submit">완료</button><button id="cancelDday" class="ghost" type="button">취소</button></div>
+            <p id="ddayMessage" class="admin-message" aria-live="polite"></p>
+          </form>
+        </div>
       </section>
 
       <section id="reportsManager" class="admin-manager">

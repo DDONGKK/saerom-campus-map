@@ -45,3 +45,7 @@ header{position:sticky;top:0;z-index:20;min-height:82px;padding:8px clamp(12px,3
 /* Highlight the currently chosen destination in a soft sky-blue tone. */
 #routeEnd option:checked{background:#cceeff;color:#07385c;font-weight:900}
 @media(max-width:850px){.header-dday{order:2;margin-right:auto}.brand{margin-left:auto;margin-right:0}.header-dday strong{font-size:1.35rem}}
+
+/* Centered logo with optional, text-only D-Day rows between the logo and controls. */
+body>header{flex-direction:column;justify-content:center;gap:7px;padding-top:10px;padding-bottom:10px}body>header .brand{margin:0 auto;width:250px;height:66px}.header-actions{width:100%;display:flex;justify-content:center;align-items:center;gap:18px}.header-dday{order:initial;width:auto;max-width:none;min-width:0;min-height:0;margin:0!important;padding:2px 8px;border:0;display:flex;flex-wrap:wrap;justify-content:center;gap:8px 22px;text-align:center}.header-dday-item{display:inline-flex!important;align-items:baseline;gap:8px;max-width:min(90vw,360px);font-size:.9rem!important;font-weight:900;white-space:normal!important;overflow:visible!important}.header-dday-item>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.header-dday-item strong{color:var(--yellow);font-size:1.25rem;white-space:nowrap}.header-dday[hidden]{display:none!important}
+@media(max-width:850px){body>header .brand{margin:0 auto;width:220px}.header-actions{flex-direction:column;gap:5px}.header-dday{order:initial;margin:0!important}.header-dday-item strong{font-size:1.15rem}}
