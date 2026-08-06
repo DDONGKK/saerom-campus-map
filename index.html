@@ -61,7 +61,7 @@
       <div class="section-head"><div><p class="eyebrow">Error Report</p><h1 data-i18n="reportTitle">오류 제보</h1></div></div>
       <form id="reportForm" class="panel report-form">
         <label><span data-i18n="reportType">오류 종류</span><select id="reportType"><option value="map" data-i18n="reportMap">지도·길 안내 오류</option><option value="place" data-i18n="reportPlace">장소 정보 오류</option><option value="quest" data-i18n="reportQuest">탐방 미션 오류</option><option value="other" data-i18n="reportOther">기타 오류</option></select></label>
-        <label><span data-i18n="reportContent">오류 내용</span><textarea id="reportContent" rows="7" maxlength="1000" required data-i18n-placeholder="reportPlaceholder" placeholder="어느 화면에서 어떤 오류가 있었는지 자세히 적어 주세요."></textarea></label>
+        <label><span data-i18n="reportContent">오류 내용</span><textarea id="reportContent" rows="7" maxlength="1000" required data-i18n-placeholder="reportPlaceholder" placeholder="어느 화면에서 어떤 오류가 있었는지 자세히 적어 주세요."></textarea><small class="report-help" data-i18n="reportSuggestion">추가하고 싶은 기능 등을 적어 주셔도 됩니다.</small><small id="reportWordWarning" class="report-word-warning" data-i18n="reportWordWarning" hidden>부적절한 단어가 감지되었습니다. 다시 한 번 확인해 주세요.</small></label>
         <label><span data-i18n="reportContact">연락처 또는 이메일 (선택)</span><input id="reportContact" maxlength="120" data-i18n-placeholder="reportContactPlaceholder" placeholder="답변이 필요한 경우에만 입력하세요."></label>
         <button type="submit" data-i18n="reportSubmit">완료</button>
         <p class="report-warning" data-i18n="reportWarning">⚠ 욕설 및 장난성 제보는 하지 말아 주세요.</p>
