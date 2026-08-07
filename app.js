@@ -55,6 +55,8 @@
   function renderBillboard(){const box=$("#eventBillboards");if(!box)return;box.replaceChildren();(window.SAEROM_BILLBOARDS||[]).filter(item=>item.active!==false).forEach(item=>{const messageText=state.lang==="en"?item.en:item.ko;if(!messageText)return;const board=el("div",{className:"event-billboard"}),track=el("div",{className:"event-billboard-track"}),unit=`${messageText}     ·     `,loop=unit.repeat(Math.max(4,Math.ceil(100/unit.length)));track.style.setProperty("--billboard-duration",`${Math.max(18,loop.length*.34)}s`);track.append(el("span",{text:loop}),el("span",{text:loop,"aria-hidden":"true"}));board.append(track);box.append(board);});}
   let ddayTimer;
   function renderDday(){const box=$("#headerDday");if(!box)return;clearTimeout(ddayTimer);box.replaceChildren();const now=new Date(),today=new Date(now.getFullYear(),now.getMonth(),now.getDate()),items=(window.SAEROM_DDAYS||[]).filter(item=>item.active!==false&&/^\d{4}-\d{2}-\d{2}$/.test(item.date||"")).map(item=>{const parts=item.date.split("-").map(Number),target=new Date(parts[0],parts[1]-1,parts[2]);return{item,days:Math.round((target-today)/86400000)}}).filter(value=>value.days>=0).sort((a,b)=>a.days-b.days);items.forEach(({item,days})=>{const row=el("span",{className:"header-dday-item"}),title=state.lang==="en"?(item.titleEn||item.titleKo):item.titleKo;row.append(el("span",{text:title}),el("strong",{text:days===0?"D-DAY":`D-${days}`}));box.append(row);});box.hidden=!items.length;if(items.length){const tomorrow=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1);ddayTimer=setTimeout(renderDday,Math.min(tomorrow-now+1000,2147483647));}}
+  const dismissedNotices=new Set();
+  function renderNotice(){const overlay=$("#noticeOverlay");if(!overlay)return;const item=(window.SAEROM_NOTICES||[]).find(value=>value.active!==false&&!dismissedNotices.has(value.id));if(!item){overlay.hidden=true;return;}$("#noticeTitle").textContent=state.lang==="en"?(item.titleEn||item.titleKo):item.titleKo;$("#noticeBody").textContent=state.lang==="en"?(item.bodyEn||item.bodyKo):item.bodyKo;$("#noticeConfirm").textContent=text("확인","OK");$("#noticeConfirm").onclick=()=>{dismissedNotices.add(item.id);renderNotice();};overlay.hidden=false;setTimeout(()=>$("#noticeConfirm").focus(),0);}
 
   function renderEvents(){renderBillboard();const box=$("#eventList");if(!box)return;box.replaceChildren();const now=Date.now(),events=(window.SAEROM_EVENTS||[]).filter(event=>event.active!==false&&(!event.endAt||new Date(event.endAt).getTime()>=now)).sort((a,b)=>String(a.startAt||"").localeCompare(String(b.startAt||"")));if(!events.length){box.append(el("p",{className:"event-empty",text:I18N[state.lang].eventEmpty}));return;}events.forEach(event=>{const place=placeById(event.placeId),card=el("article",{className:"event-card"}),eyebrow=el("p",{className:"eyebrow",text:event.startAt?new Date(event.startAt).toLocaleString(state.lang==="en"?"en-US":"ko-KR",{dateStyle:"medium",timeStyle:"short"}):text("일정 미정","Schedule TBD")}),title=el("h2",{text:state.lang==="en"&&(event.titleEn||event.descriptionEn)?event.titleEn||event.title:event.title}),meta=el("div",{className:"event-meta"}),description=el("p",{text:state.lang==="en"&&event.descriptionEn?event.descriptionEn:event.description||""});meta.append(el("span",{className:"tag",text:place?`${place.floor}${text("층","F")} ${place.room}${text("호"," · Room")}`:text("장소 미정","Location TBD")}),el("span",{className:"tag",text:place?placeName(place):event.location||text("장소 미정","Location TBD")}));card.append(eyebrow,title,meta,description);box.append(card);});}
   function classroomQuery(value){const match=norm(value).match(/^(\d+)학년(\d+)반$/);return match?`${match[1]}-${Number(match[2])}`:"";}
@@ -231,7 +233,8 @@
 
   init();
   renderDday();
-  $("#language").addEventListener("click",()=>setTimeout(renderDday));
+  renderNotice();
+  $("#language").addEventListener("click",()=>setTimeout(()=>{renderDday();renderNotice();}));
   setupRouteCompletion();
   setupErrorReport();
   setupExtraBlockedWords();
@@ -239,6 +242,7 @@
   setupNewBlockedWords();
   window.SAEROM_APP_REFRESH=function(){
     renderDday();
+    renderNotice();
     renderSearch(state.query);
     renderMap();
     initRoutes();

@@ -9,6 +9,7 @@ if (config.apiKey && config.projectId) {
   window.SAEROM_EVENTS = [];
   window.SAEROM_BILLBOARDS = [];
   window.SAEROM_DDAYS = [];
+  window.SAEROM_NOTICES = [];
   window.SAEROM_QUEST_BADGES = {};
   window.SAEROM_SUBMIT_REPORT = data => addDoc(collection(db, "reports"), Object.assign({}, data, { status: "new", createdAt: serverTimestamp() }));
   const original = new Map((D.places || []).map(place => [place.id, structuredClone(place)]));
@@ -27,6 +28,7 @@ if (config.apiKey && config.projectId) {
       window.SAEROM_QUEST_BADGES = value.questBadges || {};
       window.SAEROM_BILLBOARDS = Array.isArray(value.billboards) ? value.billboards : (value.billboard?.ko ? [Object.assign({ id: "legacy" }, value.billboard)] : []);
       window.SAEROM_DDAYS = Array.isArray(value.ddays) ? value.ddays : (value.dday?.date ? [Object.assign({ id: "legacy" }, value.dday)] : []);
+      window.SAEROM_NOTICES = Array.isArray(value.notices) ? value.notices : [];
     }
     siteLoaded = true;
     refresh();

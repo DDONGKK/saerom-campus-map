@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="admin.css?v=20260807-1">
   <link rel="stylesheet" href="admin-features.css">
-  <link rel="stylesheet" href="admin-event-flow.css">
+  <link rel="stylesheet" href="admin-event-flow.css?v=20260807-1">
   <script src="firebase-config.js"></script>
 </head>
 <body class="admin-page">
@@ -38,6 +38,7 @@
         <button type="button" data-admin-view="events">행사 일정 안내</button>
         <button type="button" data-admin-view="billboard">광고판 관리</button>
         <button type="button" data-admin-view="dday">D-Day 관리</button>
+        <button type="button" data-admin-view="notices">공지사항 관리</button>
         <button type="button" data-admin-view="reports">오류 제보함 <span id="newReportCount" class="count-badge" hidden></span></button>
       </nav>
 
@@ -169,6 +170,27 @@
             <div class="checks"><label><input id="ddayActive" type="checkbox" checked> 공개 웹에 표시</label></div>
             <div class="editor-actions"><button type="submit">완료</button><button id="cancelDday" class="ghost" type="button">취소</button></div>
             <p id="ddayMessage" class="admin-message" aria-live="polite"></p>
+          </form>
+        </div>
+      </section>
+
+      <section id="noticesManager" class="admin-manager">
+        <div class="admin-grid">
+          <aside class="panel admin-list">
+            <div class="list-head"><div><p class="eyebrow">NOTICES</p><h2>공지사항 목록</h2></div><button id="newNotice" type="button">+ 새 공지</button></div>
+            <div id="noticeAdminList"></div>
+            <p id="noticeListMessage" class="admin-message" aria-live="polite"></p>
+          </aside>
+          <form id="noticeForm" class="panel admin-editor" hidden>
+            <p class="eyebrow">NOTICE EDITOR</p><h2 id="noticeEditorTitle">새 공지 만들기</h2>
+            <input id="noticeId" type="hidden">
+            <label>공지 제목<input id="noticeTitleKo" maxlength="100" required></label>
+            <label>공지 제목 (영어)<input id="noticeTitleEn" maxlength="100" placeholder="영어 모드에서 표시"></label>
+            <label>공지 내용<textarea id="noticeBodyKo" rows="6" maxlength="1500" required></textarea></label>
+            <label>공지 내용 (영어)<textarea id="noticeBodyEn" rows="6" maxlength="1500" placeholder="영어 모드에서 표시"></textarea></label>
+            <div class="checks"><label><input id="noticeActive" type="checkbox" checked> 공개 웹에 표시</label></div>
+            <div class="editor-actions"><button type="submit">저장하고 반영하기</button><button id="cancelNotice" class="ghost" type="button">취소</button></div>
+            <p id="noticeMessage" class="admin-message" aria-live="polite"></p>
           </form>
         </div>
       </section>
