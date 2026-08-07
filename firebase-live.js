@@ -24,7 +24,7 @@ if (config.apiKey && config.projectId) {
     if (snapshot.exists()) {
       const value = snapshot.data();
       if (value.mapImages) D.floors.forEach(floor => { if (value.mapImages[floor.id]) floor.image = value.mapImages[floor.id]; });
-      if (value.questProfiles) D.questProfiles = Object.assign({}, D.questProfiles, value.questProfiles);
+      if (value.questProfiles) D.questProfiles = Object.assign({}, D.questProfiles, structuredClone(value.questProfiles));
       window.SAEROM_QUEST_BADGES = value.questBadges || {};
       window.SAEROM_BILLBOARDS = Array.isArray(value.billboards) ? value.billboards : (value.billboard?.ko ? [Object.assign({ id: "legacy" }, value.billboard)] : []);
       window.SAEROM_DDAYS = Array.isArray(value.ddays) ? value.ddays : (value.dday?.date ? [Object.assign({ id: "legacy" }, value.dday)] : []);

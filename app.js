@@ -176,11 +176,14 @@
   function renderStandaloneMission(p){const card=$("#questCard"),mission=roleMission(state.role,p);card.replaceChildren(el("p",{className:"eyebrow",text:text("장소별 탐방 미션","Place mission")}),el("h2",{text:`${p.room} ${placeName(p)}`}),el("p",{className:"mission-task",text:mission.task}));renderQuiz(card,mission,()=>{});const back=el("button",{className:"ghost",text:text("내 탐방 코스로 돌아가기","Back to my quest")});back.onclick=renderQuest;card.append(back);}
 
   function renderQuestUpdated(){
-    const ids=course();
-    state.step=Math.min(state.step,ids.length);
+    const ids=[...new Set(course())];
     state.badges=state.badges.filter(role=>ROLE_EN[role]);
     const completedInCourse=ids.filter(id=>state.completed.includes(id)).length;
-    const pct=Math.round(completedInCourse/ids.length*100);
+    const pct=ids.length?Math.round(completedInCourse/ids.length*100):0;
+    const finished=ids.length>0&&completedInCourse===ids.length;
+    state.step=finished?ids.length:Math.max(0,ids.findIndex(id=>!state.completed.includes(id)));
+    if(!finished)state.badges=state.badges.filter(role=>role!==state.role);
+    $("#resetQuest").hidden=!finished;
     $("#progressBar").style.width=pct+"%";
     $("#progressText").textContent=text(`진행률 ${completedInCourse}/${ids.length} · ${pct}%`,`Progress ${completedInCourse}/${ids.length} · ${pct}%`);
     const badges=$("#badges");
@@ -188,7 +191,7 @@
     state.badges.forEach(role=>badges.append(el("span",{className:"badge earned-badge",text:"◆ "+badgeName(role),title:badgeDescription(role)})));
     const card=$("#questCard");
     card.replaceChildren();
-    if(state.step>=ids.length){
+    if(finished){
       card.append(el("p",{className:"eyebrow",text:text("탐방 완료","Quest complete")}),el("h2",{text:text(`${state.role} 맞춤 탐방을 완료했어요!`,`${ROLE_EN[state.role]} quest completed!`)}),el("p",{text:text(`${badgeName(state.role)}를 획득했습니다.`,`You earned the ${badgeName(state.role)}!`)}));
       return;
     }
@@ -201,10 +204,10 @@
       state.answered=true;
       if(!state.completed.includes(id))state.completed.push(id);
       state.step++;
-      const finished=state.step>=ids.length;
-      if(finished&&!state.badges.includes(state.role))state.badges.push(state.role);
+      const justFinished=ids.length>0&&ids.every(placeId=>state.completed.includes(placeId));
+      if(justFinished&&!state.badges.includes(state.role))state.badges.push(state.role);
       saveQuest();
-      if(finished)toast(true,text(`${BADGE_KO[state.role]}를 얻었습니다!`,`You earned the ${BADGE_EN[state.role]}!`),2400);
+      if(justFinished)toast(true,text(`${BADGE_KO[state.role]}를 얻었습니다!`,`You earned the ${BADGE_EN[state.role]}!`),2400);
       else toast(true,text("미션 완료! 다음 장소로 이동합니다.","Mission complete! Moving to the next place."));
       setTimeout(()=>{if(state.answered)renderQuest();},900);
     });
