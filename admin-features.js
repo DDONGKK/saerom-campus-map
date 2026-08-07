@@ -1,6 +1,6 @@
 import {collection,doc,addDoc,setDoc,deleteDoc,onSnapshot,serverTimestamp} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
-const $=selector=>document.querySelector(selector),places=[...(window.SAEROM_DATA?.places||[])].sort((a,b)=>a.floor-b.floor||String(a.room).localeCompare(String(b.room),"ko",{numeric:true}));
+const $=selector=>document.querySelector(selector),ADMIN_EXCLUDED_PLACES=new Set(["room-1-119"]),places=[...(window.SAEROM_DATA?.places||[])].filter(place=>!ADMIN_EXCLUDED_PLACES.has(place.id)).sort((a,b)=>a.floor-b.floor||String(a.room).localeCompare(String(b.room),"ko",{numeric:true}));
 let db,started=false,events=[],reports=[],selectedEvent="",selectedBillboard="",selectedDday="",selectedNotice="",siteConfig={},placeOverrides=new Map();
 const roles=["신입생","전입생","학부모","교류학생","방문객"],defaultBadges={"신입생":{ko:"새롬 새싹 배지",en:"Saerom Sprout Badge"},"전입생":{ko:"새로운 시작 배지",en:"Fresh Start Badge"},"학부모":{ko:"든든한 동행 배지",en:"Supportive Companion Badge"},"교류학생":{ko:"글로벌 프렌드 배지",en:"Global Friend Badge"},"방문객":{ko:"새롬 탐험가 배지",en:"Saerom Explorer Badge"}};
 function text(target,value,kind=""){target.textContent=value;target.className=`admin-message ${kind}`;}

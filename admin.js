@@ -6,7 +6,8 @@ import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://w
 const $ = selector => document.querySelector(selector);
 const config = window.SAEROM_FIREBASE_CONFIG || {};
 const ready = Boolean(config.apiKey && config.projectId);
-const basePlaces = new Map((window.SAEROM_DATA.places || []).map(place => [place.id, structuredClone(place)]));
+const ADMIN_EXCLUDED_PLACES = new Set(["room-1-119"]);
+const basePlaces = new Map((window.SAEROM_DATA.places || []).filter(place => !ADMIN_EXCLUDED_PLACES.has(place.id)).map(place => [place.id, structuredClone(place)]));
 let app, auth, db, storage, selectedId = "", overrides = new Map();
 
 function message(target, text, kind="") { target.textContent=text; target.className=`admin-message ${kind}`; }
