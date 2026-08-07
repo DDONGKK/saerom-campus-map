@@ -17,7 +17,7 @@ header{position:sticky;top:0;z-index:20;min-height:82px;padding:8px clamp(12px,3
 .hotspot.selected:after{background:#087ccc;box-shadow:0 0 0 5px rgba(81,203,255,.38),0 0 18px 7px rgba(0,147,255,.58)}
 @keyframes pixel-ping{0%{transform:translate(-50%,-50%) scale(.25);opacity:.2}70%{transform:translate(-50%,-50%) scale(1.28);opacity:1}100%{transform:translate(-50%,-50%) scale(1);opacity:1}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
-.site-footer{display:flex;justify-content:center;gap:18px;align-items:center;padding:24px;background:var(--deep);color:#fff;border-top:4px solid var(--yellow);font-weight:900}.site-footer a{color:#fff}.firebase-offline{position:fixed;right:12px;bottom:78px;z-index:40;background:#fff4d4;border:2px solid var(--line);padding:7px 10px;font-size:.75rem;font-weight:900}
+.firebase-offline{position:fixed;right:12px;bottom:78px;z-index:40;background:#fff4d4;border:2px solid var(--line);padding:7px 10px;font-size:.75rem;font-weight:900}
 
 /* Room selection: label-safe ripple with no icon or filled background. */
 .hotspot:before,.hotspot:after{content:"";position:absolute;left:50%;top:50%;width:10px;height:10px;border:3px solid #8edcff;border-radius:50%;background:transparent;box-shadow:none;transform:translate(-50%,-50%) scale(.25);opacity:0;pointer-events:none}
